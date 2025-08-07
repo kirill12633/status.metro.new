@@ -3,360 +3,74 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Метро New Статус</title>
+<title>Сайт временно закрыт</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #121212;
-    color: #eee;
-    margin: 0; padding: 0;
-  }
-  #adminButton {
-    position: fixed;
-    top: 10px;
-    right: 15px;
-    font-size: 26px;
-    background: transparent;
-    border: none;
-    color: #eee;
-    cursor: pointer;
-    z-index: 1000;
-    transition: color 0.3s;
-  }
-  #adminButton:hover {
-    color: #61dafb;
-  }
-  #passwordOverlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+
+  body, html {
+    margin: 0;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    font-family: 'Montserrat', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1500;
-  }
-  #passwordBox {
-    background: #222;
-    padding: 20px 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 15px #61dafb;
+    overflow: hidden;
+    color: white;
+    flex-direction: column;
     text-align: center;
-    width: 320px;
+    padding: 20px;
   }
-  #passwordBox h2 {
-    margin: 0 0 15px;
-    color: #61dafb;
+
+  .container {
+    animation: fadeIn 2s ease forwards;
+    max-width: 400px;
   }
-  #adminPassword {
-    width: 100%;
-    padding: 10px;
-    font-size: 18px;
-    border: none;
-    border-radius: 4px;
-    outline: none;
+
+  h1 {
+    font-size: 2.8em;
+    margin-bottom: 0.3em;
+    letter-spacing: 2px;
+    animation: pulse 3s infinite;
   }
-  #passwordError {
-    color: #ff4c4c;
-    margin-top: 10px;
-    display: none;
+
+  p {
+    font-size: 1.2em;
+    opacity: 0.85;
+    margin-bottom: 1.5em;
   }
-  #adminPanel {
-    display: none;
-    position: fixed;
-    top: 50px;
-    right: 15px;
-    width: 420px;
-    height: 650px;
-    background: #1e1e1e;
-    border-radius: 10px;
-    box-shadow: 0 0 20px #61dafb;
-    padding: 15px;
-    overflow-y: auto;
-    z-index: 1200;
+
+  img {
+    max-width: 100%;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    animation: float 4s ease-in-out infinite;
   }
-  .service {
-    margin-bottom: 30px;
+
+  /* Анимация появления */
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(30px);}
+    to {opacity: 1; transform: translateY(0);}
   }
-  .service h3 {
-    margin: 0 0 10px;
-    border-bottom: 2px solid #61dafb;
-    padding-bottom: 6px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+
+  /* Пульсация заголовка */
+  @keyframes pulse {
+    0%, 100% {text-shadow: 0 0 10px #ffffffaa;}
+    50% {text-shadow: 0 0 20px #ff6f91;}
   }
-  .service h3 svg {
-    width: 24px;
-    height: 24px;
-    fill: #61dafb;
-  }
-  .tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 12px;
-  }
-  .tab-btn {
-    flex: 1;
-    background: #333;
-    border: none;
-    padding: 8px 12px;
-    color: #ccc;
-    font-weight: bold;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    user-select: none;
-  }
-  .tab-btn.active {
-    background: #61dafb;
-    color: #121212;
-  }
-  .tab-content {
-    background: #222;
-    padding: 12px 16px;
-    border-radius: 6px;
-    color: #ddd;
-    font-size: 14px;
-  }
-  .tab-content[hidden] {
-    display: none;
-  }
-  label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
-    cursor: pointer;
-  }
-  input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-  }
-  button.save-btn, button.reset-btn {
-    width: 48%;
-    padding: 10px;
-    margin: 10px 1% 20px 1%;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    color: #121212;
-    transition: background-color 0.3s;
-  }
-  button.save-btn {
-    background-color: #61dafb;
-  }
-  button.save-btn:hover {
-    background-color: #4fc3f7;
-  }
-  button.reset-btn {
-    background-color: #ff4c4c;
-  }
-  button.reset-btn:hover {
-    background-color: #e04343;
-  }
-  /* Scrollbar for adminPanel */
-  #adminPanel::-webkit-scrollbar {
-    width: 8px;
-  }
-  #adminPanel::-webkit-scrollbar-thumb {
-    background-color: #61dafb;
-    border-radius: 10px;
+
+  /* Лёгкое движение картинки */
+  @keyframes float {
+    0%, 100% {transform: translateY(0);}
+    50% {transform: translateY(-15px);}
   }
 </style>
 </head>
 <body>
-
-<button id="adminButton" title="Открыть админку">⚙️</button>
-
-<div id="passwordOverlay" role="dialog" aria-modal="true" aria-labelledby="passwordTitle">
-  <div id="passwordBox">
-    <h2 id="passwordTitle">Введите пароль администратора</h2>
-    <input type="password" id="adminPassword" autocomplete="off" aria-describedby="passwordError" />
-    <div id="passwordError" role="alert">Неверный пароль, попробуйте снова.</div>
+  <div class="container">
+    <h1>Сайт временно закрыт</h1>
+    <p>Приносим извинения за неудобства. Скоро всё заработает!</p>
+    <img src"https://cdn.discordapp.com/attachments/1220060388658253939/1403096438828961922/WhatsApp_I-removebg-preview-removebg-preview-removebg-preview.png?ex=68964ee3&is=6894fd63&hm=36432390eb595d4cee99efdc3e0b83e44b55ffdf5c1ca23237891f9132b5b73e& alt="Временное закрытие" />
   </div>
-</div>
-
-<div id="adminPanel" role="region" aria-label="Панель администратора">
-  <!-- Discord -->
-  <div class="service" data-service="discord">
-    <h3>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.61 15.75c-1.04 0-1.89-.95-1.89-2.12s.84-2.11 1.89-2.11c1.05 0 1.9.95 1.9 2.12 0 1.18-.85 2.11-1.9 2.11zm8.77 0c-1.04 0-1.9-.95-1.9-2.12s.85-2.11 1.9-2.11c1.05 0 1.9.95 1.9 2.12 0 1.18-.85 2.11-1.9 2.11zM12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.82 8.21 11.39.6.11.81-.26.81-.58 0-.29-.01-1.05-.02-2.06-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.32-1.75-1.32-1.75-1.08-.74.08-.72.08-.72 1.19.08 1.81 1.22 1.81 1.22 1.06 1.82 2.78 1.29 3.46.99.11-.78.42-1.29.76-1.59-2.66-.3-5.45-1.33-5.45-5.9 0-1.3.47-2.36 1.22-3.19-.12-.3-.53-1.51.12-3.15 0 0 .99-.32 3.24 1.21a11.25 11.25 0 0 1 2.95-.4c1 .01 2 .14 2.95.41 2.24-1.54 3.23-1.21 3.23-1.21.65 1.64.24 2.85.12 3.15.76.83 1.22 1.89 1.22 3.19 0 4.58-2.8 5.6-5.46 5.9.43.37.81 1.1.81 2.22 0 1.61-.01 2.91-.01 3.3 0 .32.21.69.82.58C20.56 21.82 24 17.3 24 12c0-6.63-5.37-12-12-12Z"/></svg>
-      Discord сервер
-    </h3>
-    <div class="tabs" role="tablist">
-      <button class="tab-btn active" data-tab="discord-main" role="tab" aria-selected="true">Основные настройки</button>
-      <button class="tab-btn" data-tab="discord-server" role="tab" aria-selected="false">Сам сервер</button>
-      <button class="tab-btn" data-tab="discord-other" role="tab" aria-selected="false">Другие</button>
-    </div>
-    <div id="discord-main" class="tab-content" role="tabpanel">
-      <label><input type="checkbox" id="discordOnline" /> Онлайн</label>
-    </div>
-    <div id="discord-server" class="tab-content" hidden role="tabpanel">
-      <p>Статус сервера Discord: <b id="discordServerStatus">Онлайн</b></p>
-      <p>Пинг: <b>32ms</b></p>
-      <p>Нагрузка: <b>45%</b></p>
-    </div>
-    <div id="discord-other" class="tab-content" hidden role="tabpanel">
-      <p>Другие настройки Discord...</p>
-    </div>
-  </div>
-
-  <!-- Roblox -->
-  <div class="service" data-service="roblox">
-    <h3>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2L17 12 7 22z"/></svg>
-      Roblox игры
-    </h3>
-    <div class="tabs" role="tablist">
-      <button class="tab-btn active" data-tab="roblox-main" role="tab" aria-selected="true">Основные настройки</button>
-      <button class="tab-btn" data-tab="roblox-server" role="tab" aria-selected="false">Сам сервер</button>
-      <button class="tab-btn" data-tab="roblox-other" role="tab" aria-selected="false">Другие</button>
-    </div>
-    <div id="roblox-main" class="tab-content" role="tabpanel">
-      <label><input type="checkbox" id="robloxOnline" /> Онлайн</label>
-    </div>
-    <div id="roblox-server" class="tab-content" hidden role="tabpanel">
-      <p>Статус сервера Roblox: <b id="robloxServerStatus">Онлайн</b></p>
-      <p>Пинг: <b>45ms</b></p>
-      <p>Нагрузка: <b>52%</b></p>
-    </div>
-    <div id="roblox-other" class="tab-content" hidden role="tabpanel">
-      <p>Другие настройки Roblox...</p>
-    </div>
-  </div>
-
-  <!-- YouTube -->
-  <div class="service" data-service="youtube">
-    <h3>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.615 3.184c-.957-.351-5.133-.351-5.133-.351s-4.19 0-5.13.351c-.914.336-1.52 1.266-1.52 3.56v5.448c0 2.292.606 3.22 1.52 3.557.94.35 5.133.35 5.133.35s4.178 0 5.133-.35c.918-.338 1.522-1.267 1.522-3.558v-5.45c0-2.292-.604-3.22-1.52-3.558zM10.538 14.58v-5.43l4.613 2.716-4.613 2.715z"/></svg>
-      YouTube канал
-    </h3>
-    <div class="tabs" role="tablist">
-      <button class="tab-btn active" data-tab="youtube-main" role="tab" aria-selected="true">Основные настройки</button>
-      <button class="tab-btn" data-tab="youtube-server" role="tab" aria-selected="false">Сам сервер</button>
-      <button class="tab-btn" data-tab="youtube-other" role="tab" aria-selected="false">Другие</button>
-    </div>
-    <div id="youtube-main" class="tab-content" role="tabpanel">
-      <label><input type="checkbox" id="youtubeOnline" /> Онлайн</label>
-    </div>
-    <div id="youtube-server" class="tab-content" hidden role="tabpanel">
-      <p>Статус YouTube: <b>Активен</b></p>
-      <p>Подписчики: <b>12345</b></p>
-    </div>
-    <div id="youtube-other" class="tab-content" hidden role="tabpanel">
-      <p>Другие настройки YouTube...</p>
-    </div>
-  </div>
-
-  <!-- Telegram -->
-  <div class="service" data-service="telegram">
-    <h3>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12l20-7-11 9-4 3z"/></svg>
-      Телеграм канал
-    </h3>
-    <div class="tabs" role="tablist">
-      <button class="tab-btn active" data-tab="telegram-main" role="tab" aria-selected="true">Основные настройки</button>
-      <button class="tab-btn" data-tab="telegram-server" role="tab" aria-selected="false">Сам сервер</button>
-      <button class="tab-btn" data-tab="telegram-other" role="tab" aria-selected="false">Другие</button>
-    </div>
-    <div id="telegram-main" class="tab-content" role="tabpanel">
-      <label><input type="checkbox" id="telegramOnline" /> Онлайн</label>
-    </div>
-    <div id="telegram-server" class="tab-content" hidden role="tabpanel">
-      <p>Статус Telegram: <b>Активен</b></p>
-      <p>Подписчики: <b>6789</b></p>
-    </div>
-    <div id="telegram-other" class="tab-content" hidden role="tabpanel">
-      <p>Другие настройки Telegram...</p>
-    </div>
-  </div>
-
-  <!-- Сайт -->
-  <div class="service" data-service="website">
-    <h3>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="#61dafb" stroke-width="2" fill="none"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20" stroke="#61dafb" stroke-width="2"/></svg>
-      Сайт
-    </h3>
-    <div class="tabs" role="tablist">
-      <button class="tab-btn active" data-tab="website-main" role="tab" aria-selected="true">Основные настройки</button>
-      <button class="tab-btn" data-tab="website-server" role="tab" aria-selected="false">Сам сервер</button>
-      <button class="tab-btn" data-tab="website-other" role="tab" aria-selected="false">Другие</button>
-    </div>
-    <div id="website-main" class="tab-content" role="tabpanel">
-      <label><input type="checkbox" id="websiteOnline" /> Онлайн</label>
-    </div>
-    <div id="website-server" class="tab-content" hidden role="tabpanel">
-      <p>Статус сайта: <b>Работает</b></p>
-      <p>Загрузка сервера: <b>33%</b></p>
-    </div>
-    <div id="website-other" class="tab-content" hidden role="tabpanel">
-      <p>Другие настройки сайта...</p>
-    </div>
-  </div>
-</div>
-
-<script>
-  const adminButton = document.getElementById('adminButton');
-  const passwordOverlay = document.getElementById('passwordOverlay');
-  const adminPasswordInput = document.getElementById('adminPassword');
-  const passwordError = document.getElementById('passwordError');
-  const adminPanel = document.getElementById('adminPanel');
-
-  const ADMIN_PASSWORD = '1234';
-
-  // Открытие панели после правильного пароля
-  adminPasswordInput.addEventListener('keydown', e => {
-    if(e.key === 'Enter') {
-      if(adminPasswordInput.value === ADMIN_PASSWORD) {
-        passwordOverlay.style.display = 'none';
-        adminPanel.style.display = 'block';
-        passwordError.style.display = 'none';
-        adminPasswordInput.value = '';
-      } else {
-        passwordError.style.display = 'block';
-      }
-    }
-  });
-
-  // Кнопка ⚙️ открывает/закрывает панель (только если пароль уже введён)
-  adminButton.addEventListener('click', () => {
-    if(passwordOverlay.style.display !== 'none') {
-      adminPasswordInput.focus();
-    } else {
-      if(adminPanel.style.display === 'block') {
-        adminPanel.style.display = 'none';
-      } else {
-        adminPanel.style.display = 'block';
-      }
-    }
-  });
-
-  // Логика переключения вкладок
-  document.querySelectorAll('.service').forEach(service => {
-    const tabs = service.querySelectorAll('.tab-btn');
-    const contents = service.querySelectorAll('.tab-content');
-
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        // Деактивируем все вкладки
-        tabs.forEach(t => {
-          t.classList.remove('active');
-          t.setAttribute('aria-selected', 'false');
-        });
-        // Скрываем все контенты
-        contents.forEach(c => c.hidden = true);
-
-        // Активируем выбранную вкладку
-        tab.classList.add('active');
-        tab.setAttribute('aria-selected', 'true');
-        const tabId = tab.getAttribute('data-tab');
-        service.querySelector(`#${tabId}`).hidden = false;
-      });
-    });
-  });
-</script>
-
 </body>
 </html>
