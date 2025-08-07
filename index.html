@@ -3,13 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Статус сайта и сервисов с админкой</title>
+<title>Статус сайта с админкой</title>
 <style>
   body, html {
-    margin: 0; padding: 0; min-height: 100vh;
+    margin: 0; padding: 0; height: 100%;
     font-family: Arial, sans-serif;
-    background: #f9fafb;
-    color: #333;
   }
   #closedMessage {
     position: fixed;
@@ -24,24 +22,152 @@
     text-align: center;
     z-index: 9999;
   }
-  #content {
-    padding: 20px;
-    max-width: 900px;
-    margin: 80px auto 40px;
+  #adminButton {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 18px;
+    z-index: 10000;
+  }
+  #adminPanel {
+    position: fixed;
+    top: 50px; right: 10px;
     background: white;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgb(0 0 0 / 0.1);
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    display: none;
+    z-index: 10000;
+    width: 250px;
   }
-  h1 {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #1e40af;
+  #adminPanel label, #adminPanel input {
+    display: block;
+    margin-bottom: 10px;
+    width: 100%;
   }
-  .status-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
-    gap: 20px;
+  #adminPanel input[type="checkbox"] {
+    width: auto;
+    display: inline-block;
   }
-  .status-item {
-    display: flex;
-    align-items: center;
+  #adminPanel button {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  #adminPanel .error {
+    color: red;
+    font-size: 14px;
+    margin-top: -5px;
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+<body>
+
+<div id="content">
+  <h1>Добро пожаловать на сайт!</h1>
+  <p>Здесь можно разместить любую информацию.</p>
+</div>
+
+<div id="closedMessage" style="display:none;">
+  <div>
+    <h2>Сайт временно закрыт</h2>
+    <p>Технические работы</p>
+  </div>
+</div>
+
+<button id="adminButton" title="Админ панель">⚙️</button>
+
+<div id="adminPanel">
+  <label for="adminPassword">Введите пароль:</label>
+  <input type="password" id="adminPassword" placeholder="Пароль" />
+  <div class="error" id="errorMsg" style="display:none;">Неверный пароль</div>
+  
+  <label>
+    <input type="checkbox" id="siteClosedCheckbox" />
+    Закрыть сайт (технические работы)
+  </label>
+  
+  <button id="saveSettings">Сохранить</button>
+</div>
+
+<script>
+  const ADMIN_PASSWORD = '1234'; // пароль админа
+
+  const adminButton = document.getElementById('adminButton');
+  const adminPanel = document.getElementById('adminPanel');
+  const adminPasswordInput = document.getElementById('adminPassword');
+  const errorMsg = document.getElementById('errorMsg');
+  const siteClosedCheckbox = document.getElementById('siteClosedCheckbox');
+  const saveSettingsButton = document.getElementById('saveSettings');
+
+  const closedMessage = document.getElementById('closedMessage');
+  const content = document.getElementById('content');
+
+  // Проверяем статус из localStorage
+  function getSiteClosed() {
+    return localStorage.getItem('siteClosed') === 'true';
+  }
+  function setSiteClosed(value) {
+    localStorage.setItem('siteClosed', value);
+  }
+
+  // Обновляем отображение сайта в зависимости от статуса
+  function updateSiteStatus() {
+    if(getSiteClosed()) {
+      closedMessage.style.display = 'flex';
+      content.style.display = 'none';
+    } else {
+      closedMessage.style.display = 'none';
+      content.style.display = 'block';
+    }
+  }
+
+  updateSiteStatus();
+
+  // Показ/скрытие админ панели по кнопке
+  adminButton.addEventListener('click', () => {
+    if (adminPanel.style.display === 'none' || adminPanel.style.display === '') {
+      adminPanel.style.display = 'block';
+    } else {
+      adminPanel.style.display = 'none';
+      errorMsg.style.display = 'none';
+      adminPasswordInput.value = '';
+      siteClosedCheckbox.checked = getSiteClosed();
+    }
+  });
+
+  // Сохраняем настройки при нажатии "Сохранить"
+  saveSettingsButton.addEventListener('click', () => {
+    const pass = adminPasswordInput.value;
+    if(pass === ADMIN_PASSWORD) {
+      setSiteClosed(siteClosedCheckbox.checked);
+      updateSiteStatus();
+      errorMsg.style.display = 'none';
+      alert('Настройки сохранены!');
+      adminPanel.style.display = 'none';
+      adminPasswordInput.value = '';
+    } else {
+      errorMsg.style.display = 'block';
+    }
+  });
+
+  // При открытии панели показываем текущий статус
+  adminButton.addEventListener('click', () => {
+    siteClosedCheckbox.checked = getSiteClosed();
+  });
+</script>
+
+</body>
+</html>
