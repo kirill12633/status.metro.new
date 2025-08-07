@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Status Metro New — Управление</title>
+  <title>Статус сайта — Админка</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
   />
   <style>
-    /* Модальное окно */
     .modal-bg {
       background-color: rgba(0, 0, 0, 0.5);
     }
@@ -20,16 +19,69 @@
     .tab-content > div.active {
       display: block;
     }
-    /* Кнопки табов */
     .tab-btn.active {
-      border-bottom: 3px solid #4f46e5; /* Indigo-600 */
+      border-bottom: 3px solid #4f46e5;
       font-weight: 600;
       color: #4f46e5;
+    }
+    /* Toast уведомления */
+    #toastContainer {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      z-index: 60;
+      max-width: 320px;
+    }
+    .toast {
+      background: #4f46e5;
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 8px rgba(79,70,229,0.3);
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: fadein 0.5s, fadeout 0.5s 4.5s;
+    }
+    .toast.hide {
+      display: none;
+    }
+    .toast button {
+      background: transparent;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+    @keyframes fadein {
+      from {opacity: 0; transform: translateX(50px);}
+      to {opacity: 1; transform: translateX(0);}
+    }
+    @keyframes fadeout {
+      from {opacity: 1;}
+      to {opacity: 0;}
+    }
+    /* Системное сообщение */
+    #systemMessageBar {
+      background-color: #fde68a;
+      color: #92400e;
+      padding: 0.7rem 1rem;
+      text-align: center;
+      font-weight: 600;
+      display: none;
     }
   </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
-  <!-- Админ кнопка входа -->
+
+  <!-- Системное сообщение -->
+  <div id="systemMessageBar"></div>
+
+  <!-- Админ кнопка -->
   <button
     id="adminOpenBtn"
     title="Вход в админку"
@@ -131,6 +183,15 @@
                 placeholder="Напишите комментарий для пользователей..."
               ></textarea>
             </label>
+            <label class="block">
+              <span class="text-gray-700 font-semibold mb-1 block">Системное сообщение (для всех пользователей)</span>
+              <textarea
+                id="systemMessage"
+                rows="2"
+                class="w-full p-2 border rounded"
+                placeholder="Напишите сообщение, которое будет видно всем..."
+              ></textarea>
+            </label>
           </div>
 
           <!-- Онлайн -->
@@ -149,189 +210,241 @@
           </div>
         </div>
 
-        <div class="flex justify-between mt-6">
+        <!-- История обновлений -->
+        <div class="mt-8">
+          <h3 class="text-lg font-semibold mb-2">История обновлений</h3>
+          <ul id="historyList" class="max-h-40 overflow-y-auto border border-gray-300 rounded p-3 bg-white text-sm"></ul>
           <button
-            id="resetSettingsBtn"
-            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded flex items-center gap-2"
+            id="clearHistoryBtn"
+            class="mt-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded flex items-center gap-2"
           >
-            <i class="fas fa-trash"></i> Сбросить настройки
-          </button>
-          <button
-            id="saveSettingsBtn"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded flex items-center gap-2"
-          >
-            <i class="fas fa-save"></i> Сохранить настройки
+            <i class="fas fa-trash"></i> Очистить историю
           </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Оверлей закрытия сайта -->
-  <div
-    id="siteClosedOverlay"
-    class="fixed inset-0 bg-white bg-opacity-95 flex flex-col items-center justify-center text-center p-4 hidden z-40"
-  >
-    <i class="fas fa-tools fa-6x text-indigo-600 mb-6 animate-bounce"></i>
-    <h1 class="text-4xl font-bold mb-2 text-indigo-700">Сайт закрыт на технические работы</h1>
-    <p id="overlayComment" class="mb-6 text-gray-700 max-w-md"></p>
-    <button
-      id="overlayOpenBtn"
-      class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded shadow"
-    >
-      Открыть сайт (админ)
-    </button>
-  </div>
+  <!-- Контейнер для уведомлений toast -->
+  <div id="toastContainer"></div>
 
   <script>
-    const ADMIN_CODE = "1234";
+    // Хранение данных
+    const STORAGE_KEYS = {
+      SITE_CLOSED: "siteClosed",
+      ADMIN_COMMENT: "adminComment",
+      SYSTEM_MESSAGE: "systemMessage",
+      HISTORY: "updateHistory",
+    };
 
+    // Кастомные уведомления (toast)
+    function showToast(message) {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = "toast";
+      toast.innerHTML = `
+        <span>${message}</span>
+        <button aria-label="Закрыть уведомление">&times;</button>
+      `;
+
+      const closeBtn = toast.querySelector("button");
+      closeBtn.onclick = () => {
+        toast.classList.add("hide");
+        setTimeout(() => toast.remove(), 300);
+      };
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.add("hide");
+        setTimeout(() => toast.remove(), 300);
+      }, 5000);
+    }
+
+    // Установка значений из localStorage в админку
+    function loadAdminData() {
+      const siteClosed = localStorage.getItem(STORAGE_KEYS.SITE_CLOSED) === "true";
+      const adminComment = localStorage.getItem(STORAGE_KEYS.ADMIN_COMMENT) || "";
+      const systemMessage = localStorage.getItem(STORAGE_KEYS.SYSTEM_MESSAGE) || "";
+
+      document.getElementById("siteStatusToggle").checked = siteClosed;
+      document.getElementById("adminComment").value = adminComment;
+      document.getElementById("systemMessage").value = systemMessage;
+
+      updateLastUpdateInfo();
+      updateSystemMessageBar(systemMessage);
+      renderHistory();
+    }
+
+    // Обновляем поле "Последнее обновление"
+    function updateLastUpdateInfo() {
+      const lastUpdate = localStorage.getItem("lastUpdate") || "-";
+      const adminComment = localStorage.getItem(STORAGE_KEYS.ADMIN_COMMENT) || "-";
+      document.getElementById("lastUpdateText").textContent = lastUpdate;
+      document.getElementById("adminCommentText").textContent = adminComment;
+    }
+
+    // Обновляем системное сообщение вверху сайта
+    function updateSystemMessageBar(msg) {
+      const bar = document.getElementById("systemMessageBar");
+      if (msg && msg.trim() !== "") {
+        bar.textContent = msg;
+        bar.style.display = "block";
+      } else {
+        bar.style.display = "none";
+      }
+    }
+
+    // Добавляем запись в историю
+    function addToHistory(status, comment) {
+      const history = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY) || "[]");
+      const time = new Date().toLocaleString();
+      history.unshift({ time, status, comment });
+      if (history.length > 20) history.pop();
+      localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(history));
+      renderHistory();
+    }
+
+    // Отрисовка истории
+    function renderHistory() {
+      const history = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY) || "[]");
+      const list = document.getElementById("historyList");
+      list.innerHTML = "";
+      if (history.length === 0) {
+        list.innerHTML = "<li class='text-gray-500'>История пустая</li>";
+        return;
+      }
+      for (const item of history) {
+        const li = document.createElement("li");
+        li.textContent = `[${item.time}] Статус: ${
+          item.status ? "Закрыт" : "Открыт"
+        }, Комментарий: ${item.comment || "-"}`;
+        list.appendChild(li);
+      }
+    }
+
+    // Сохраняем изменения админки
+    function saveAdminData() {
+      const siteClosed = document.getElementById("siteStatusToggle").checked;
+      const adminComment = document.getElementById("adminComment").value.trim();
+      const systemMessage = document.getElementById("systemMessage").value.trim();
+
+      localStorage.setItem(STORAGE_KEYS.SITE_CLOSED, siteClosed);
+      localStorage.setItem(STORAGE_KEYS.ADMIN_COMMENT, adminComment);
+      localStorage.setItem(STORAGE_KEYS.SYSTEM_MESSAGE, systemMessage);
+
+      const now = new Date().toLocaleString();
+      localStorage.setItem("lastUpdate", now);
+
+      addToHistory(siteClosed, adminComment);
+
+      updateLastUpdateInfo();
+      updateSystemMessageBar(systemMessage);
+
+      // Показываем toast уведомление для админа
+      showToast(
+        `Обновлено: сайт ${siteClosed ? "закрыт" : "открыт"}. Комментарий: ${adminComment ||
+          "без комментария"}`
+      );
+    }
+
+    // Проверка админ кода (пароля)
+    const ADMIN_CODE = "1234"; // поменяй на свой
+
+    // Элементы
     const adminOpenBtn = document.getElementById("adminOpenBtn");
     const adminModal = document.getElementById("adminModal");
     const adminCloseBtn = document.getElementById("adminCloseBtn");
     const adminLoginSection = document.getElementById("adminLoginSection");
     const adminPanel = document.getElementById("adminPanel");
-    const adminLoginBtn = document.getElementById("adminLoginBtn");
     const adminCodeInput = document.getElementById("adminCodeInput");
+    const adminLoginBtn = document.getElementById("adminLoginBtn");
     const loginError = document.getElementById("loginError");
 
-    const siteStatusToggle = document.getElementById("siteStatusToggle");
-    const adminComment = document.getElementById("adminComment");
-    const saveSettingsBtn = document.getElementById("saveSettingsBtn");
-    const resetSettingsBtn = document.getElementById("resetSettingsBtn");
-
-    const lastUpdateText = document.getElementById("lastUpdateText");
-    const adminCommentText = document.getElementById("adminCommentText");
-
-    const siteClosedOverlay = document.getElementById("siteClosedOverlay");
-    const overlayComment = document.getElementById("overlayComment");
-    const overlayOpenBtn = document.getElementById("overlayOpenBtn");
-
-    const tabButtons = document.querySelectorAll(".tab-btn");
-    const tabContents = document.querySelectorAll(".tab-content > div");
-
-    function openModal() {
-      adminModal.classList.remove("hidden");
-      adminCodeInput.value = "";
-      loginError.classList.add("hidden");
-      adminLoginSection.style.display = "block";
-      adminPanel.style.display = "none";
-    }
-
-    function closeModal() {
-      adminModal.classList.add("hidden");
-    }
-
     // Переключение табов
-    tabButtons.forEach((btn) => {
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
-        tabButtons.forEach((b) => b.classList.remove("active"));
-        tabContents.forEach((c) => c.classList.remove("active"));
+        document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
-        document.getElementById(btn.dataset.tab).classList.add("active");
+        const tab = btn.dataset.tab;
+        document.querySelectorAll(".tab-content > div").forEach((div) => {
+          div.classList.remove("active");
+        });
+        document.getElementById(tab).classList.add("active");
       });
     });
 
-    function updateUI() {
-      const siteStatus = localStorage.getItem("siteStatus") || "open";
-      const lastUpdate = localStorage.getItem("lastUpdate");
-      const comment = localStorage.getItem("adminComment") || "";
+    // Открыть админку
+    adminOpenBtn.addEventListener("click", () => {
+      adminModal.classList.remove("hidden");
+      adminCodeInput.value = "";
+      adminLoginSection.classList.remove("hidden");
+      adminPanel.classList.add("hidden");
+      loginError.classList.add("hidden");
+      adminCodeInput.focus();
+    });
 
-      siteStatusToggle.checked = siteStatus === "closed";
-      adminComment.value = comment;
-      lastUpdateText.textContent = lastUpdate || "-";
-      adminCommentText.textContent = comment || "-";
+    // Закрыть админку
+    adminCloseBtn.addEventListener("click", () => {
+      adminModal.classList.add("hidden");
+    });
 
-      // Показываем или скрываем оверлей закрытия
-      if (siteStatus === "closed") {
-        siteClosedOverlay.style.display = "flex";
-        overlayComment.textContent = comment;
-      } else {
-        siteClosedOverlay.style.display = "none";
-      }
-    }
-
-    adminOpenBtn.addEventListener("click", openModal);
-    adminCloseBtn.addEventListener("click", closeModal);
-
+    // Вход в админку
     adminLoginBtn.addEventListener("click", () => {
       const code = adminCodeInput.value.trim();
       if (code === ADMIN_CODE) {
-        // Открываем админку
-        adminLoginSection.style.display = "none";
-        adminPanel.style.display = "block";
-        loginError.classList.add("hidden");
+        adminLoginSection.classList.add("hidden");
+        adminPanel.classList.remove("hidden");
+        loadAdminData();
       } else {
         loginError.classList.remove("hidden");
       }
     });
 
-    saveSettingsBtn.addEventListener("click", () => {
-      const code = adminCodeInput.value.trim();
-      if (code !== ADMIN_CODE) {
-        alert("Неверный код доступа!");
-        return;
-      }
-      const newStatus = siteStatusToggle.checked ? "closed" : "open";
-      localStorage.setItem("siteStatus", newStatus);
+    // Сохранять изменения при уходе из textarea и переключении чекбокса
+    document.getElementById("siteStatusToggle").addEventListener("change", saveAdminData);
+    document.getElementById("adminComment").addEventListener("blur", saveAdminData);
+    document.getElementById("systemMessage").addEventListener("blur", saveAdminData);
 
-      const now = new Date();
-      const dateString = now.toLocaleString("ru-RU", {
-        dateStyle: "short",
-        timeStyle: "short",
-      });
-      localStorage.setItem("lastUpdate", dateString);
-
-      const commentText = adminComment.value.trim();
-      localStorage.setItem("adminComment", commentText);
-
-      updateUI();
-      alert("Настройки сохранены!");
-      closeModal();
-    });
-
-    resetSettingsBtn.addEventListener("click", () => {
-      const code = adminCodeInput.value.trim();
-      if (code !== ADMIN_CODE) {
-        alert("Неверный код доступа!");
-        return;
-      }
-      if (
-        confirm(
-          "Вы действительно хотите сбросить все настройки к значениям по умолчанию?"
-        )
-      ) {
-        localStorage.removeItem("siteStatus");
-        localStorage.removeItem("lastUpdate");
-        localStorage.removeItem("adminComment");
-        updateUI();
-        alert("Настройки сброшены!");
-        closeModal();
+    // Очистка истории
+    document.getElementById("clearHistoryBtn").addEventListener("click", () => {
+      if (confirm("Очистить историю обновлений?")) {
+        localStorage.removeItem(STORAGE_KEYS.HISTORY);
+        renderHistory();
+        showToast("История обновлений очищена");
       }
     });
 
-    // Кнопка открытия сайта поверх оверлея (при закрытом сайте)
-    overlayOpenBtn.addEventListener("click", () => {
-      const pass = prompt("Введите код администратора для открытия сайта:");
-      if (pass === ADMIN_CODE) {
-        localStorage.setItem("siteStatus", "open");
-        const now = new Date();
-        localStorage.setItem(
-          "lastUpdate",
-          now.toLocaleString("ru-RU", {
-            dateStyle: "short",
-            timeStyle: "short",
-          })
+    // Показать уведомление в админке при загрузке страницы, если есть изменения
+    window.addEventListener("load", () => {
+      const lastUpdate = localStorage.getItem("lastUpdate");
+      if (lastUpdate) {
+        const siteClosed = localStorage.getItem(STORAGE_KEYS.SITE_CLOSED) === "true";
+        const adminComment = localStorage.getItem(STORAGE_KEYS.ADMIN_COMMENT) || "";
+        showToast(
+          `Сайт сейчас ${siteClosed ? "закрыт" : "открыт"}. Комментарий: ${adminComment || "-"}`
         );
-        updateUI();
-        alert("Сайт открыт!");
-      } else {
-        alert("Неверный код!");
       }
+      // Отобразить системное сообщение на сайте сразу
+      updateSystemMessageBar(localStorage.getItem(STORAGE_KEYS.SYSTEM_MESSAGE) || "");
     });
 
-    // Инициализация
-    updateUI();
+    // Если сайт закрыт, можно показать на странице блок с сообщением (пример)
+    function checkSiteClosed() {
+      const closed = localStorage.getItem(STORAGE_KEYS.SITE_CLOSED) === "true";
+      if (closed) {
+        document.body.innerHTML = `
+          <div class="flex items-center justify-center min-h-screen bg-gray-100 p-4 text-center">
+            <div>
+              <h1 class="text-3xl font-bold mb-4 text-indigo-700">Сайт временно закрыт</h1>
+              <p class="mb-4 text-gray-700">${localStorage.getItem(STORAGE_KEYS.ADMIN_COMMENT) || "Технические работы"}</p>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    checkSiteClosed();
   </script>
 </body>
 </html>
