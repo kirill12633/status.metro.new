@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Metro New Статусы и Админка</title>
+<title>Metro New Статусы с Вкладками и Анимациями</title>
 <style>
+  /* Общие стили */
   body, html {
     margin: 0; padding: 0; min-height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -32,10 +33,15 @@
     background: transparent;
     border: none;
     color: white;
-    font-size: 24px;
+    font-size: 26px;
     cursor: pointer;
     user-select: none;
+    transition: transform 0.3s ease;
   }
+  #adminButton:hover {
+    transform: rotate(90deg);
+  }
+
   main {
     max-width: 900px;
     margin: 90px auto 40px;
@@ -51,6 +57,7 @@
     font-weight: 600;
     display: none;
     text-align: center;
+    animation: fadeInDown 0.6s ease forwards;
   }
   .statuses {
     display: grid;
@@ -67,7 +74,16 @@
     gap: 15px;
     font-weight: 600;
     font-size: 18px;
+    opacity: 0;
+    transform: translateY(15px);
+    animation: fadeUp 0.5s forwards;
   }
+  .status-item:nth-child(1) { animation-delay: 0.1s; }
+  .status-item:nth-child(2) { animation-delay: 0.2s; }
+  .status-item:nth-child(3) { animation-delay: 0.3s; }
+  .status-item:nth-child(4) { animation-delay: 0.4s; }
+  .status-item:nth-child(5) { animation-delay: 0.5s; }
+
   .status-item svg {
     width: 30px; height: 30px;
     flex-shrink: 0;
@@ -78,59 +94,105 @@
   .offline {
     color: #dc2626;
   }
+
+  /* Анимации */
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   /* Админка */
   #adminPanel {
     position: fixed;
     top: 60px; right: 20px;
-    width: 300px;
+    width: 340px;
     background: white;
-    box-shadow: 0 5px 15px rgb(0 0 0 / 0.3);
-    border-radius: 12px;
-    padding: 20px;
+    box-shadow: 0 5px 20px rgb(0 0 0 / 0.3);
+    border-radius: 14px;
+    padding: 15px;
     display: none;
     z-index: 1100;
+    user-select: none;
   }
   #adminPanel h2 {
     margin-top: 0;
     margin-bottom: 15px;
-    font-size: 20px;
+    font-size: 22px;
     text-align: center;
     color: #4f46e5;
+    user-select: text;
   }
-  #adminPanel label {
+
+  /* Вкладки */
+  .tab-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+  .tab-buttons button {
+    flex: 1;
+    padding: 10px 0;
+    border: none;
+    background: #e0e7ff;
+    color: #4f46e5;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 10px 10px 0 0;
+    margin-right: 4px;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  .tab-buttons button:last-child {
+    margin-right: 0;
+  }
+  .tab-buttons button.active {
+    background: #4f46e5;
+    color: white;
+    box-shadow: 0 3px 10px rgb(79 70 229 / 0.4);
+  }
+  .tab-content {
+    background: #f9fafb;
+    border-radius: 0 14px 14px 14px;
+    padding: 15px 20px;
+    box-shadow: inset 0 0 6px rgb(0 0 0 / 0.05);
+    max-height: 360px;
+    overflow-y: auto;
+  }
+  /* Стиль для меток и чекбоксов */
+  label {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 14px;
     font-weight: 600;
     font-size: 16px;
+    cursor: pointer;
+    user-select: none;
   }
-  #adminPanel input[type="checkbox"] {
+  input[type="checkbox"] {
     transform: scale(1.3);
     cursor: pointer;
   }
-  #adminPanel input[type="password"] {
+  input[type="password"] {
     width: 100%;
     padding: 8px 10px;
-    margin-bottom: 12px;
+    margin-bottom: 15px;
     font-size: 16px;
     border-radius: 6px;
     border: 1px solid #ccc;
-  }
-  #adminPanel button {
-    background: #4f46e5;
-    color: white;
-    border: none;
-    width: 100%;
-    padding: 10px;
-    font-weight: 700;
-    font-size: 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  #adminPanel button:hover {
-    background: #4338ca;
+    user-select: text;
   }
   #errorMsg {
     color: #dc2626;
@@ -139,12 +201,58 @@
     display: none;
     text-align: center;
   }
+  button.save-btn {
+    background: #4f46e5;
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 11px 0;
+    font-weight: 700;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  button.save-btn:hover {
+    background: #4338ca;
+  }
+  button.reset-btn {
+    margin-top: 12px;
+    background: #dc2626;
+    border: none;
+    width: 100%;
+    padding: 11px 0;
+    font-weight: 700;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  button.reset-btn:hover {
+    background: #b91c1c;
+  }
+
   /* Иконки */
   svg.online-icon {
     fill: #16a34a;
   }
   svg.offline-icon {
     fill: #dc2626;
+  }
+
+  /* Серверный статус (заглушка) */
+  .server-status {
+    font-size: 14px;
+    font-weight: 600;
+    color: #444;
+    padding: 10px 0;
+  }
+  .server-status span {
+    font-weight: 700;
+    color: #4f46e5;
   }
 </style>
 </head>
@@ -163,43 +271,65 @@
   </div>
 </main>
 
-<div id="adminPanel" role="dialog" aria-modal="true" aria-labelledby="adminPanelTitle">
+<div id="adminPanel" role="dialog" aria-modal="true" aria-labelledby="adminPanelTitle" aria-hidden="true">
   <h2 id="adminPanelTitle">Админ панель</h2>
+
   <input type="password" id="adminPassword" placeholder="Введите пароль" aria-label="Пароль админа" />
   <div id="errorMsg">Неверный пароль</div>
 
-  <label for="siteClosedCheckbox">
-    Закрыть сайт (технические работы)
-    <input type="checkbox" id="siteClosedCheckbox" />
-  </label>
+  <div class="tab-buttons" role="tablist" aria-label="Вкладки админ панели">
+    <button class="tab-btn active" data-tab="mainSettings" role="tab" aria-selected="true" tabindex="0">Основные</button>
+    <button class="tab-btn" data-tab="onlineSettings" role="tab" aria-selected="false" tabindex="-1">Онлайн</button>
+    <button class="tab-btn" data-tab="serverSettings" role="tab" aria-selected="false" tabindex="-1">Сам сервер</button>
+    <button class="tab-btn" data-tab="otherSettings" role="tab" aria-selected="false" tabindex="-1">Другие</button>
+  </div>
 
-  <label for="discordStatusCheckbox">
-    Discord сервер онлайн
-    <input type="checkbox" id="discordStatusCheckbox" />
-  </label>
+  <div id="mainSettings" class="tab-content" role="tabpanel">
+    <label>
+      Закрыть сайт на технические работы
+      <input type="checkbox" id="siteClosedCheckbox" />
+    </label>
+    <label>
+      Показывать уведомления при закрытии
+      <input type="checkbox" id="showNotificationCheckbox" />
+    </label>
+  </div>
 
-  <label for="robloxStatusCheckbox">
-    Roblox игры онлайн
-    <input type="checkbox" id="robloxStatusCheckbox" />
-  </label>
+  <div id="onlineSettings" class="tab-content" role="tabpanel" hidden>
+    <label>
+      Discord сервер
+      <input type="checkbox" id="discordStatusCheckbox" />
+    </label>
+    <label>
+      Roblox игры
+      <input type="checkbox" id="robloxStatusCheckbox" />
+    </label>
+    <label>
+      YouTube канал
+      <input type="checkbox" id="youtubeStatusCheckbox" />
+    </label>
+    <label>
+      Телеграм канал
+      <input type="checkbox" id="telegramStatusCheckbox" />
+    </label>
+    <label>
+      Сайт
+      <input type="checkbox" id="websiteStatusCheckbox" />
+    </label>
+  </div>
 
-  <label for="youtubeStatusCheckbox">
-    YouTube канал онлайн
-    <input type="checkbox" id="youtubeStatusCheckbox" />
-  </label>
+  <div id="serverSettings" class="tab-content" role="tabpanel" hidden>
+    <div class="server-status">Статус сервера: <span id="serverStatusText">Онлайн</span></div>
+    <div class="server-status">Пинг: <span id="serverPing">35ms</span></div>
+    <div class="server-status">Нагрузка: <span id="serverLoad">42%</span></div>
+  </div>
 
-  <label for="telegramStatusCheckbox">
-    Телеграм канал онлайн
-    <input type="checkbox" id="telegramStatusCheckbox" />
-  </label>
+  <div id="otherSettings" class="tab-content" role="tabpanel" hidden>
+    <p>Здесь могут быть другие настройки...</p>
+  </div>
 
-  <label for="websiteStatusCheckbox">
-    Сайт онлайн
-    <input type="checkbox" id="websiteStatusCheckbox" />
-  </label>
-
-  <button id="saveSettingsButton">Сохранить</button>
-  <button id="resetSettingsButton" style="margin-top:10px; background:#dc2626;">Сбросить настройки</button>
+  <button class="save-btn" id="saveSettingsButton">Сохранить настройки</button>
+  <button class="reset-btn" id="resetSettingsButton">Сбросить настройки</button>
 </div>
 
 <script>
@@ -210,20 +340,30 @@
   const adminPanel = document.getElementById('adminPanel');
   const adminPasswordInput = document.getElementById('adminPassword');
   const errorMsg = document.getElementById('errorMsg');
+
+  const siteClosedBanner = document.getElementById('siteClosedBanner');
+  const statusesContainer = document.getElementById('statusesContainer');
+
   const siteClosedCheckbox = document.getElementById('siteClosedCheckbox');
+  const showNotificationCheckbox = document.getElementById('showNotificationCheckbox');
+
   const discordStatusCheckbox = document.getElementById('discordStatusCheckbox');
   const robloxStatusCheckbox = document.getElementById('robloxStatusCheckbox');
   const youtubeStatusCheckbox = document.getElementById('youtubeStatusCheckbox');
   const telegramStatusCheckbox = document.getElementById('telegramStatusCheckbox');
   const websiteStatusCheckbox = document.getElementById('websiteStatusCheckbox');
+
   const saveSettingsButton = document.getElementById('saveSettingsButton');
   const resetSettingsButton = document.getElementById('resetSettingsButton');
-  const siteClosedBanner = document.getElementById('siteClosedBanner');
-  const statusesContainer = document.getElementById('statusesContainer');
 
-  // Статусы и ключи для localStorage
+  // Вкладки
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  // Ключи localStorage
   const statusKeys = {
     siteClosed: 'status_siteClosed',
+    showNotification: 'status_showNotification',
     discord: 'status_discord',
     roblox: 'status_roblox',
     youtube: 'status_youtube',
@@ -231,16 +371,15 @@
     website: 'status_website'
   };
 
-  // Иконки SVG для каждого сервиса
+  // Иконки (онлайн/оффлайн) с цветом
   const icons = {
-    discord: `<svg class="online-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.3698A19.7913 19.7913 0 0016.08 3c-.255 0-.508.012-.758.035a12.74 12.74 0 00-4.736 0A15.87 15.87 0 0010.88 3c-4.267 0-7.85 1.361-10.132 3.37a21.148 21.148 0 00-2.994 7.777c-.246 1.312-.246 2.679 0 3.99a19.745 19.745 0 003.024 7.829 14.128 14.128 0 005.607 3.648c.59.111 1.195.166 1.803.166.61 0 1.218-.055 1.805-.166a14.109 14.109 0 005.604-3.649 19.78 19.78 0 003.027-7.831c.243-1.311.243-2.677 0-3.99a21.176 21.176 0 00-2.997-7.778zM8.75 15.25c-1.105 0-2-.968-2-2.161 0-1.19.89-2.162 2-2.162s2 .968 2 2.161c0 1.19-.89 2.162-2 2.162zm6.5 0c-1.105 0-2-.968-2-2.161 0-1.19.89-2.162 2-2.162s2 .968 2 2.161c0 1.19-.9 2.162-2 2.162z"/></svg>`,
-    roblox: `<svg class="online-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2L17 12 7 22z"/></svg>`,
-    youtube: `<svg class="online-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-.957-.351-5.133-.351-5.133-.351s-4.19 0-5.13.351c-.914.336-1.52 1.266-1.52 3.56v5.448c0 2.292.606 3.22 1.52 3.557.94.35 5.133.35 5.133.35s4.178 0 5.133-.35c.918-.338 1.522-1.267 1.522-3.558v-5.45c0-2.292-.604-3.22-1.52-3.558zM10.538 14.58v-5.43l4.613 2.716-4.613 2.715z"/></svg>`,
-    telegram: `<svg class="online-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9.993 16.179c-.304 0-.38-.138-.516-.487l-1.789-5.38-1.74-.575c-.373-.123-.381-.373.08-.54l8.812-3.4c.41-.158.77.095.62.572l-1.66 7.72c-.123.55-.45.692-.79.43l-2.017-1.68-1.27 1.23c-.152.145-.28.269-.5.269z"/></svg>`,
+    discord: `<svg class="online-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M7.61 15.75c-1.04 0-1.89-.95-1.89-2.12s.84-2.11 1.89-2.11c1.05 0 1.9.95 1.9 2.12 0 1.18-.85 2.11-1.9 2.11zm8.77 0c-1.04 0-1.9-.95-1.9-2.12s.85-2.11 1.9-2.11c1.05 0 1.9.95 1.9 2.12 0 1.18-.85 2.11-1.9 2.11zM12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.82 8.21 11.39.6.11.81-.26.81-.58 0-.29-.01-1.05-.02-2.06-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.32-1.75-1.32-1.75-1.08-.74.08-.72.08-.72 1.19.08 1.81 1.22 1.81 1.22 1.06 1.82 2.78 1.29 3.46.99.11-.78.42-1.29.76-1.59-2.66-.3-5.45-1.33-5.45-5.9 0-1.3.47-2.36 1.22-3.19-.12-.3-.53-1.51.12-3.15 0 0 .99-.32 3.24 1.21a11.25 11.25 0 0 1 2.95-.4c1 .01 2 .14 2.95.41 2.24-1.54 3.23-1.21 3.23-1.21.65 1.64.24 2.85.12 3.15.76.83 1.22 1.89 1.22 3.19 0 4.58-2.8 5.6-5.46 5.9.43.37.81 1.1.81 2.22 0 1.61-.01 2.91-.01 3.3 0 .32.21.69.82.58C20.56 21.82 24 17.3 24 12c0-6.63-5.37-12-12-12Z"/></svg>`,
+    roblox: `<svg class="online-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M7 2L17 12 7 22z"/></svg>`,
+    youtube: `<svg class="online-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M19.615 3.184c-.957-.351-5.133-.351-5.133-.351s-4.19 0-5.13.351c-.914.336-1.52 1.266-1.52 3.56v5.448c0 2.292.606 3.22 1.52 3.557.94.35 5.133.35 5.133.35s4.178 0 5.133-.35c.918-.338 1.522-1.267 1.522-3.558v-5.45c0-2.292-.604-3.22-1.52-3.558zM10.538 14.58v-5.43l4.613 2.716-4.613 2.715z"/></svg>`,
+    telegram: `<svg class="online-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M9.993 16.179c-.304 0-.38-.138-.516-.487l-1.789-5.38-1.74-.575c-.373-.123-.381-.373.08-.54l8.812-3.4c.41-.158.77.095.62.572l-1.66 7.72c-.123.55-.45.692-.79.43l-2.017-1.68-1.27 1.23c-.152.145-.28.269-.5.269z"/></svg>`,
     website: `<svg class="online-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>`
   };
 
-  // Метки для сервисов
   const serviceLabels = {
     discord: 'Discord сервер',
     roblox: 'Roblox игры',
@@ -249,22 +388,11 @@
     website: 'Сайт'
   };
 
-  // Отрисовка статусов
-  function renderStatuses(settings) {
-    statusesContainer.innerHTML = '';
-    for (const [key, label] of Object.entries(serviceLabels)) {
-      const isOnline = settings[key];
-      const statusItem = document.createElement('div');
-      statusItem.className = 'status-item ' + (isOnline ? 'online' : 'offline');
-      statusItem.innerHTML = `${icons[key]} <span>${label}: <strong>${isOnline ? 'Онлайн' : 'Оффлайн'}</strong></span>`;
-      statusesContainer.appendChild(statusItem);
-    }
-  }
-
-  // Загрузка настроек из localStorage или дефолт
+  // Загрузка настроек
   function loadSettings() {
     return {
       siteClosed: JSON.parse(localStorage.getItem(statusKeys.siteClosed)) || false,
+      showNotification: JSON.parse(localStorage.getItem(statusKeys.showNotification)) ?? true,
       discord: JSON.parse(localStorage.getItem(statusKeys.discord)) ?? true,
       roblox: JSON.parse(localStorage.getItem(statusKeys.roblox)) ?? true,
       youtube: JSON.parse(localStorage.getItem(statusKeys.youtube)) ?? true,
@@ -273,9 +401,10 @@
     };
   }
 
-  // Сохранение настроек в localStorage
+  // Сохранение настроек
   function saveSettings(settings) {
     localStorage.setItem(statusKeys.siteClosed, JSON.stringify(settings.siteClosed));
+    localStorage.setItem(statusKeys.showNotification, JSON.stringify(settings.showNotification));
     localStorage.setItem(statusKeys.discord, JSON.stringify(settings.discord));
     localStorage.setItem(statusKeys.roblox, JSON.stringify(settings.roblox));
     localStorage.setItem(statusKeys.youtube, JSON.stringify(settings.youtube));
@@ -283,22 +412,43 @@
     localStorage.setItem(statusKeys.website, JSON.stringify(settings.website));
   }
 
-  // Обновление интерфейса на основе настроек
-  function updateUI(settings) {
-    siteClosedBanner.style.display = settings.siteClosed ? 'block' : 'none';
-    renderStatuses(settings);
+  // Обновить видимость баннера "сайт закрыт"
+  function updateSiteClosedBanner(siteClosed, showNotification) {
+    if (siteClosed) {
+      siteClosedBanner.style.display = 'block';
+      if (showNotification && Notification.permission === "granted") {
+        new Notification("Внимание!", {
+          body: "Сайт закрыт на технические работы",
+          icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Warning_icon.svg/1024px-Warning_icon.svg.png"
+        });
+      }
+    } else {
+      siteClosedBanner.style.display = 'none';
+    }
   }
 
-  // Валидация пароля и открытие админки
-  function openAdminPanel() {
-    errorMsg.style.display = 'none';
-    adminPasswordInput.value = '';
-    adminPanel.style.display = 'block';
-    adminPasswordInput.focus();
+  // Отрисовать статусы онлайн/оффлайн
+  function renderStatuses(settings) {
+    statusesContainer.innerHTML = '';
+    Object.entries(serviceLabels).forEach(([key, label]) => {
+      const isOnline = settings[key];
+      const statusClass = isOnline ? 'online' : 'offline';
+      const icon = isOnline ? icons[key] : icons[key].replace('online-icon', 'offline-icon').replace(/currentColor/g, '#dc2626');
+      const statusItem = document.createElement('div');
+      statusItem.className = `status-item ${statusClass}`;
+      statusItem.innerHTML = `
+        ${icon}
+        <div>${label}: <strong>${isOnline ? 'Онлайн' : 'Оффлайн'}</strong></div>
+      `;
+      statusesContainer.appendChild(statusItem);
+    });
+  }
 
-    // Заполнение чекбоксов текущими настройками
-    const settings = loadSettings();
+  // Инициализация админки - заполнить поля из localStorage
+  function initAdminPanel(settings) {
     siteClosedCheckbox.checked = settings.siteClosed;
+    showNotificationCheckbox.checked = settings.showNotification;
+
     discordStatusCheckbox.checked = settings.discord;
     robloxStatusCheckbox.checked = settings.roblox;
     youtubeStatusCheckbox.checked = settings.youtube;
@@ -306,60 +456,105 @@
     websiteStatusCheckbox.checked = settings.website;
   }
 
-  // Закрыть админку
-  function closeAdminPanel() {
-    adminPanel.style.display = 'none';
-  }
-
+  // Проверка пароля и открытие админки
   adminButton.addEventListener('click', () => {
     if (adminPanel.style.display === 'block') {
-      closeAdminPanel();
+      adminPanel.style.display = 'none';
+      adminPanel.setAttribute('aria-hidden', 'true');
+      errorMsg.style.display = 'none';
+      adminPasswordInput.value = '';
     } else {
-      openAdminPanel();
+      adminPanel.style.display = 'block';
+      adminPanel.setAttribute('aria-hidden', 'false');
+      adminPasswordInput.focus();
     }
   });
 
+  // Проверка пароля при вводе (Enter)
+  adminPasswordInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      if (adminPasswordInput.value === ADMIN_PASSWORD) {
+        errorMsg.style.display = 'none';
+        adminPasswordInput.disabled = true;
+        adminPasswordInput.style.display = 'none';
+        loadCurrentSettings();
+      } else {
+        errorMsg.style.display = 'block';
+      }
+    }
+  });
+
+  // Загружаем настройки и инициализируем поля
+  function loadCurrentSettings() {
+    const settings = loadSettings();
+    initAdminPanel(settings);
+  }
+
+  // Вкладки админки
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+        b.tabIndex = -1;
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      btn.tabIndex = 0;
+
+      const target = btn.dataset.tab;
+      tabContents.forEach(content => {
+        if (content.id === target) {
+          content.hidden = false;
+        } else {
+          content.hidden = true;
+        }
+      });
+    });
+  });
+
+  // Сохранить настройки
   saveSettingsButton.addEventListener('click', () => {
-    if (adminPasswordInput.value !== ADMIN_PASSWORD) {
+    if (adminPasswordInput.disabled === false) {
       errorMsg.style.display = 'block';
+      errorMsg.textContent = 'Введите правильный пароль!';
       return;
     }
-    errorMsg.style.display = 'none';
-
     const newSettings = {
       siteClosed: siteClosedCheckbox.checked,
+      showNotification: showNotificationCheckbox.checked,
       discord: discordStatusCheckbox.checked,
       roblox: robloxStatusCheckbox.checked,
       youtube: youtubeStatusCheckbox.checked,
       telegram: telegramStatusCheckbox.checked,
       website: websiteStatusCheckbox.checked
     };
-
     saveSettings(newSettings);
-    updateUI(newSettings);
-    closeAdminPanel();
+    renderStatuses(newSettings);
+    updateSiteClosedBanner(newSettings.siteClosed, newSettings.showNotification);
+    alert('Настройки сохранены!');
   });
 
+  // Сброс настроек (удаляем localStorage)
   resetSettingsButton.addEventListener('click', () => {
-    if (!confirm('Вы действительно хотите сбросить настройки к значениям по умолчанию?')) return;
-
-    const defaultSettings = {
-      siteClosed: false,
-      discord: true,
-      roblox: true,
-      youtube: true,
-      telegram: true,
-      website: true
-    };
-    saveSettings(defaultSettings);
-    updateUI(defaultSettings);
-    closeAdminPanel();
+    if (confirm('Вы уверены, что хотите сбросить все настройки к значениям по умолчанию?')) {
+      localStorage.clear();
+      location.reload();
+    }
   });
 
-  // Инициализация страницы
-  updateUI(loadSettings());
+  // Запрос разрешения на уведомления при загрузке
+  if ("Notification" in window && Notification.permission !== "granted") {
+    Notification.requestPermission();
+  }
+
+  // Инициализация при загрузке страницы
+  window.addEventListener('DOMContentLoaded', () => {
+    const settings = loadSettings();
+    renderStatuses(settings);
+    updateSiteClosedBanner(settings.siteClosed, settings.showNotification);
+  });
 </script>
 
 </body>
 </html>
-
