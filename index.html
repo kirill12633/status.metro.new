@@ -3,429 +3,335 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Управление сайтом</title>
+  <title>Status Metro New — Управление</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
   <style>
-    .wave {
-      animation: wave 3s linear infinite;
-      display: inline-block;
+    /* Модальное окно */
+    .modal-bg {
+      background-color: rgba(0, 0, 0, 0.5);
     }
-    @keyframes wave {
-      0%, 100% { transform: rotate(0deg); }
-      25% { transform: rotate(5deg); }
-      75% { transform: rotate(-5deg); }
+    .tab-content > div {
+      display: none;
     }
-    #siteClosedOverlay {
-      position: fixed; inset: 0; background: rgba(255,255,255,0.95);
-      display: none; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 50; text-align: center; padding: 2rem; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333;
-    }
-    #siteClosedOverlay .icon {
-      font-size: 6rem; color: #facc15; animation: floating 6s ease-in-out infinite; margin-bottom: 1rem;
-    }
-    @keyframes floating {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-    }
-    #openSiteButton {
-      position: fixed; top: 1rem; right: 1rem;
-      display: none; background-color: #3b82f6; color: white;
-      border: none; padding: 0.6rem 1.2rem; border-radius: 0.375rem;
-      font-weight: 600; cursor: pointer; box-shadow: 0 4px 8px rgba(59,130,246,0.4);
-      transition: background-color 0.3s; z-index: 60;
-    }
-    #openSiteButton:hover { background-color: #2563eb; }
-    #adminPanel {
-      position: fixed; bottom: 0; left: 0; right: 0; max-height: 60vh;
-      background: white; box-shadow: 0 -4px 20px rgba(0,0,0,0.15); overflow-y: auto;
-      padding: 2rem 2.5rem; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: none; z-index: 60; border-top-left-radius: 1rem; border-top-right-radius: 1rem;
-      transition: transform 0.3s ease;
-    }
-    #adminPanel.show {
+    .tab-content > div.active {
       display: block;
-      transform: translateY(0);
     }
-    #adminCloseBtn {
-      position: absolute; top: 1rem; right: 1.5rem; font-size: 1.8rem;
-      font-weight: 700; cursor: pointer; color: #9ca3af; background: transparent;
-      border: none; transition: color 0.3s;
-    }
-    #adminCloseBtn:hover { color: #ef4444; }
-
-    h3 {
-      font-size: 1.8rem; font-weight: 800; margin-bottom: 1.5rem; color: #1e40af; text-align: center;
-    }
-
-    .btn-card {
-      cursor: pointer;
-      border-radius: 0.75rem;
-      border: 2px solid transparent;
-      padding: 1.5rem 1.8rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      box-shadow: 0 4px 12px rgb(59 130 246 / 0.15);
-      background-color: #f0f9ff;
-      color: #2563eb;
-      font-weight: 700;
-      font-size: 1.1rem;
-      transition: all 0.3s ease;
-      user-select: none;
-      flex-grow: 1;
-      justify-content: center;
-      flex-direction: column;
-      text-align: center;
-    }
-    .btn-card i {
-      font-size: 2.5rem;
-      margin-bottom: 0.25rem;
-      transition: transform 0.3s ease;
-    }
-    .btn-card:hover {
-      box-shadow: 0 8px 20px rgb(37 99 235 / 0.4);
-      background-color: #dbeafe;
-      color: #1e40af;
-    }
-    .btn-card.selected {
-      border-color: #2563eb;
-      background-color: #bfdbfe;
-      color: #1e3a8a;
-      box-shadow: 0 0 20px #2563ebaa;
-    }
-    .btn-card.selected i {
-      transform: scale(1.2) rotate(10deg);
-    }
-
-    #adminCodeInput {
-      width: 100%;
-      padding: 0.6rem 1rem;
-      border: 2px solid #d1d5db;
-      border-radius: 0.75rem;
-      font-size: 1.1rem;
-      transition: border-color 0.3s;
-      margin-top: 1.25rem;
-    }
-    #adminCodeInput:focus {
-      border-color: #2563eb;
-      outline: none;
-      box-shadow: 0 0 8px #bfdbfe;
-    }
-
-    #saveSettingsBtn, #resetSettingsBtn {
-      margin-top: 2rem;
-      width: 100%;
-      font-weight: 800;
-      padding: 0.85rem;
-      border-radius: 1rem;
-      border: none;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      font-size: 1.1rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.6rem;
-    }
-    #saveSettingsBtn {
-      background-color: #2563eb;
-      color: white;
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.5);
-    }
-    #saveSettingsBtn:hover {
-      background-color: #1e40af;
-    }
-    #resetSettingsBtn {
-      background-color: #ef4444;
-      color: white;
-      margin-top: 0.8rem;
-      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.5);
-    }
-    #resetSettingsBtn:hover {
-      background-color: #b91c1c;
-    }
-
-    #lastUpdated {
-      margin-top: 2rem;
-      font-size: 1rem;
-      color: #6b7280;
-      text-align: center;
-      font-style: italic;
+    /* Кнопки табов */
+    .tab-btn.active {
+      border-bottom: 3px solid #4f46e5; /* Indigo-600 */
       font-weight: 600;
+      color: #4f46e5;
     }
   </style>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+  <!-- Админ кнопка входа -->
+  <button
+    id="adminOpenBtn"
+    title="Вход в админку"
+    class="fixed top-4 right-4 z-50 bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-full shadow-lg transition"
+  >
+    <i class="fas fa-cog fa-lg"></i>
+  </button>
 
-  <button id="openSiteButton" title="Открыть сайт" aria-label="Открыть сайт">Открыть сайт</button>
+  <!-- Модальное окно админки -->
+  <div
+    id="adminModal"
+    class="modal-bg fixed inset-0 flex items-center justify-center hidden"
+  >
+    <div
+      class="bg-white rounded-lg shadow-xl w-full max-w-3xl p-6 relative"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="adminTitle"
+    >
+      <button
+        id="adminCloseBtn"
+        class="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+        title="Закрыть"
+      >
+        <i class="fas fa-times fa-lg"></i>
+      </button>
 
-  <div id="siteClosedOverlay" role="alert" aria-live="assertive">
-    <i class="fas fa-tools icon wave" aria-hidden="true"></i>
-    <h1 class="text-4xl font-bold mb-4">Сайт временно закрыт на технические работы</h1>
-    <p class="text-lg max-w-xl mx-auto">Извините за неудобства, скоро всё будет работать!</p>
-  </div>
-
-  <main id="mainContent" aria-label="Основной контент сайта" class="max-w-4xl mx-auto mt-16 px-6 text-gray-700 font-sans">
-
-    <section aria-labelledby="sectionDiscord" class="mb-10">
-      <h2 id="sectionDiscord" class="text-3xl font-extrabold text-indigo-600 flex items-center gap-3">
-        <i class="fab fa-discord"></i> Discord Сервер
+      <h2
+        id="adminTitle"
+        class="text-2xl font-bold mb-4 flex items-center gap-2"
+      >
+        <i class="fas fa-tools text-indigo-600"></i> Панель администратора
       </h2>
-      <ul class="mt-4 space-y-3 text-lg">
-        <li class="flex justify-between items-center border border-indigo-200 rounded-lg p-4 shadow-sm bg-indigo-50">
-          <span>Основные настройки</span>
-          <span class="flex items-center gap-2 text-green-600 font-semibold">
-            <i class="fas fa-check-circle"></i> Онлайн
-          </span>
-        </li>
-        <li class="flex justify-between items-center border border-indigo-200 rounded-lg p-4 shadow-sm bg-indigo-50">
-          <span>Сам сервер</span>
-          <span class="flex items-center gap-2 text-green-600 font-semibold">
-            <i class="fas fa-check-circle"></i> Онлайн
-          </span>
-        </li>
-        <li class="flex justify-between items-center border border-indigo-200 rounded-lg p-4 shadow-sm bg-indigo-50">
-          <span>Другие</span>
-          <span class="flex items-center gap-2 text-red-500 font-semibold">
-            <i class="fas fa-times-circle"></i> Офлайн
-          </span>
-        </li>
-      </ul>
-    </section>
 
-    <section aria-labelledby="sectionRoblox" class="mb-12">
-      <h2 id="sectionRoblox" class="text-3xl font-extrabold text-indigo-600 flex items-center gap-3">
-        <i class="fas fa-gamepad"></i> Roblox Игры
-      </h2>
-      <ul class="mt-4 space-y-3 text-lg">
-        <li class="flex justify-between items-center border border-indigo-200 rounded-lg p-4 shadow-sm bg-indigo-50">
-          <span>Основные настройки</span>
-          <span class="flex items-center gap-2 text-green-600 font-semibold">
-            <i class="fas fa-check-circle"></i> Онлайн
-          </span>
-        </li>
-        <li class="flex justify-between items-center border border-indigo-200 rounded-lg p-4 shadow-sm bg-indigo-50">
-          <span>Сам сервер</span>
-          <span class="flex items-center gap-2 text-green-600 font-semibold">
-            <i class="fas fa-check-circle"></i> Онлайн
-          </span>
-        </li>
-        <li class="flex justify-between items-center border border-indigo-200 rounded-lg p-4 shadow-sm bg-indigo-50">
-          <span>Другие</span>
-          <span class="flex items-center gap-2 text-red-500 font-semibold">
-            <i class="fas fa-times-circle"></i> Офлайн
-          </span>
-        </li>
-      </ul>
-    </section>
+      <!-- Ввод кода -->
+      <div id="adminLoginSection">
+        <p class="mb-2 text-gray-700">
+          Введите пароль администратора для доступа к настройкам:
+        </p>
+        <input
+          id="adminCodeInput"
+          type="password"
+          placeholder="Введите код доступа"
+          class="w-full p-2 border rounded mb-4"
+          autocomplete="off"
+        />
+        <button
+          id="adminLoginBtn"
+          class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded"
+        >
+          Войти
+        </button>
+        <p id="loginError" class="text-red-600 mt-2 hidden">Неверный код доступа!</p>
+      </div>
 
-    <section aria-labelledby="sectionSite" class="mb-6">
-      <h2 id="sectionSite" class="text-3xl font-extrabold text-indigo-600 flex items-center gap-3">
-        <i class="fas fa-globe"></i> Сайт
-      </h2>
-      <div class="flex items-center gap-4 mt-4">
-        <div id="siteStatus" class="flex items-center gap-2 text-lg font-semibold text-green-600">
-          <i class="fas fa-circle text-green-500 text-xs"></i> Открыт
+      <!-- Основная админка -->
+      <div id="adminPanel" class="hidden">
+        <!-- Время обновления и комментарий -->
+        <div
+          id="lastUpdateInfo"
+          class="mb-4 bg-indigo-50 border border-indigo-200 text-indigo-700 p-3 rounded"
+        >
+          <strong>Последнее обновление:</strong> <span id="lastUpdateText">-</span><br />
+          <strong>Комментарий:</strong> <span id="adminCommentText">-</span>
+        </div>
+
+        <!-- Таб кнопки -->
+        <div class="flex gap-4 mb-6 border-b border-gray-300">
+          <button
+            class="tab-btn py-2 px-4 cursor-pointer active text-indigo-600 border-b-2 border-indigo-600"
+            data-tab="mainSettings"
+          >
+            Основные настройки
+          </button>
+          <button class="tab-btn py-2 px-4 cursor-pointer" data-tab="onlineStatus">
+            Онлайн
+          </button>
+          <button class="tab-btn py-2 px-4 cursor-pointer" data-tab="serverSettings">
+            Сам сервер
+          </button>
+          <button class="tab-btn py-2 px-4 cursor-pointer" data-tab="otherSettings">
+            Другие
+          </button>
+        </div>
+
+        <div class="tab-content">
+          <!-- Основные настройки -->
+          <div id="mainSettings" class="active space-y-4">
+            <label class="flex items-center gap-3">
+              <input type="checkbox" id="siteStatusToggle" />
+              <span class="font-semibold text-gray-700">Сайт закрыт (технические работы)</span>
+            </label>
+            <label class="block">
+              <span class="text-gray-700 font-semibold mb-1 block">Комментарий администратора</span>
+              <textarea
+                id="adminComment"
+                rows="3"
+                class="w-full p-2 border rounded"
+                placeholder="Напишите комментарий для пользователей..."
+              ></textarea>
+            </label>
+          </div>
+
+          <!-- Онлайн -->
+          <div id="onlineStatus" class="space-y-4">
+            <p>Здесь будут статусы онлайн серверов (пока пусто)</p>
+          </div>
+
+          <!-- Сам сервер -->
+          <div id="serverSettings" class="space-y-4">
+            <p>Настройки сервера (пока пусто)</p>
+          </div>
+
+          <!-- Другие -->
+          <div id="otherSettings" class="space-y-4">
+            <p>Другие настройки (пока пусто)</p>
+          </div>
+        </div>
+
+        <div class="flex justify-between mt-6">
+          <button
+            id="resetSettingsBtn"
+            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded flex items-center gap-2"
+          >
+            <i class="fas fa-trash"></i> Сбросить настройки
+          </button>
+          <button
+            id="saveSettingsBtn"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded flex items-center gap-2"
+          >
+            <i class="fas fa-save"></i> Сохранить настройки
+          </button>
         </div>
       </div>
-      <div id="lastUpdated"></div>
-    </section>
-
-  </main>
-
-  <div id="adminPanel" role="dialog" aria-modal="true" aria-labelledby="adminTitle" tabindex="-1">
-    <button id="adminCloseBtn" aria-label="Закрыть админку">&times;</button>
-    <h3 id="adminTitle">Управление статусом сайта</h3>
-
-    <div class="flex gap-6 mt-6">
-      <div
-        class="btn-card"
-        id="btnOpen"
-        role="radio"
-        aria-checked="true"
-        tabindex="0"
-        aria-label="Открыть сайт"
-        title="Открыть сайт"
-      >
-        <i class="fas fa-globe"></i>
-        Открыт
-      </div>
-      <div
-        class="btn-card"
-        id="btnClosed"
-        role="radio"
-        aria-checked="false"
-        tabindex="-1"
-        aria-label="Закрыть сайт на технические работы"
-        title="Закрыть сайт на технические работы"
-      >
-        <i class="fas fa-tools"></i>
-        Закрыт
-      </div>
     </div>
+  </div>
 
-    <label for="adminCodeInput" class="block mt-6 font-semibold text-gray-700">Введите код доступа</label>
-    <input id="adminCodeInput" type="password" placeholder="Код доступа" autocomplete="off" aria-required="true" />
-
-    <button id="saveSettingsBtn" aria-label="Сохранить настройки">
-      <i class="fas fa-save"></i> Сохранить
+  <!-- Оверлей закрытия сайта -->
+  <div
+    id="siteClosedOverlay"
+    class="fixed inset-0 bg-white bg-opacity-95 flex flex-col items-center justify-center text-center p-4 hidden z-40"
+  >
+    <i class="fas fa-tools fa-6x text-indigo-600 mb-6 animate-bounce"></i>
+    <h1 class="text-4xl font-bold mb-2 text-indigo-700">Сайт закрыт на технические работы</h1>
+    <p id="overlayComment" class="mb-6 text-gray-700 max-w-md"></p>
+    <button
+      id="overlayOpenBtn"
+      class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded shadow"
+    >
+      Открыть сайт (админ)
     </button>
-    <button id="resetSettingsBtn" aria-label="Сбросить настройки">
-      <i class="fas fa-trash-alt"></i> Сбросить все настройки
-    </button>
-
-    <div id="lastUpdated" aria-live="polite" class="mt-6 text-center text-gray-500 font-semibold"></div>
   </div>
 
   <script>
-    const overlay = document.getElementById('siteClosedOverlay');
-    const openSiteBtn = document.getElementById('openSiteButton');
-    const adminPanel = document.getElementById('adminPanel');
-    const adminCloseBtn = document.getElementById('adminCloseBtn');
-    const btnOpen = document.getElementById('btnOpen');
-    const btnClosed = document.getElementById('btnClosed');
-    const adminCodeInput = document.getElementById('adminCodeInput');
-    const saveSettingsBtn = document.getElementById('saveSettingsBtn');
-    const resetSettingsBtn = document.getElementById('resetSettingsBtn');
-    const siteStatusDisplay = document.getElementById('siteStatus');
-    const lastUpdatedDisplay = adminPanel.querySelector('#lastUpdated');
+    const ADMIN_CODE = "1234";
 
-    const ADMIN_CODE = '1234';
+    const adminOpenBtn = document.getElementById("adminOpenBtn");
+    const adminModal = document.getElementById("adminModal");
+    const adminCloseBtn = document.getElementById("adminCloseBtn");
+    const adminLoginSection = document.getElementById("adminLoginSection");
+    const adminPanel = document.getElementById("adminPanel");
+    const adminLoginBtn = document.getElementById("adminLoginBtn");
+    const adminCodeInput = document.getElementById("adminCodeInput");
+    const loginError = document.getElementById("loginError");
 
-    // Переменная для хранения текущего статуса
-    let currentStatus = 'open';
+    const siteStatusToggle = document.getElementById("siteStatusToggle");
+    const adminComment = document.getElementById("adminComment");
+    const saveSettingsBtn = document.getElementById("saveSettingsBtn");
+    const resetSettingsBtn = document.getElementById("resetSettingsBtn");
 
-    // Функция для обновления визуала кнопок и ARIA
-    function updateRadioButtons(status) {
-      if (status === 'open') {
-        btnOpen.classList.add('selected');
-        btnOpen.setAttribute('aria-checked', 'true');
-        btnOpen.setAttribute('tabindex', '0');
-        btnClosed.classList.remove('selected');
-        btnClosed.setAttribute('aria-checked', 'false');
-        btnClosed.setAttribute('tabindex', '-1');
-      } else {
-        btnClosed.classList.add('selected');
-        btnClosed.setAttribute('aria-checked', 'true');
-        btnClosed.setAttribute('tabindex', '0');
-        btnOpen.classList.remove('selected');
-        btnOpen.setAttribute('aria-checked', 'false');
-        btnOpen.setAttribute('tabindex', '-1');
-      }
+    const lastUpdateText = document.getElementById("lastUpdateText");
+    const adminCommentText = document.getElementById("adminCommentText");
+
+    const siteClosedOverlay = document.getElementById("siteClosedOverlay");
+    const overlayComment = document.getElementById("overlayComment");
+    const overlayOpenBtn = document.getElementById("overlayOpenBtn");
+
+    const tabButtons = document.querySelectorAll(".tab-btn");
+    const tabContents = document.querySelectorAll(".tab-content > div");
+
+    function openModal() {
+      adminModal.classList.remove("hidden");
+      adminCodeInput.value = "";
+      loginError.classList.add("hidden");
+      adminLoginSection.style.display = "block";
+      adminPanel.style.display = "none";
     }
 
-    // Обновить статус сайта на странице
-    function updateSiteStatusDisplay(status) {
-      currentStatus = status;
-      if (status === 'open') {
-        siteStatusDisplay.innerHTML = '<i class="fas fa-circle text-green-500 text-xs"></i> Открыт';
-        siteStatusDisplay.classList.remove('text-red-600');
-        siteStatusDisplay.classList.add('text-green-600');
-      } else {
-        siteStatusDisplay.innerHTML = '<i class="fas fa-circle text-red-600 text-xs"></i> Закрыт на тех. работы';
-        siteStatusDisplay.classList.remove('text-green-600');
-        siteStatusDisplay.classList.add('text-red-600');
-      }
-      updateRadioButtons(status);
+    function closeModal() {
+      adminModal.classList.add("hidden");
     }
 
-    // Обновить время последнего обновления
-    function updateLastUpdated(dateStr) {
-      if (!dateStr) {
-        lastUpdatedDisplay.textContent = 'Последнее обновление: не установлено';
-      } else {
-        lastUpdatedDisplay.textContent = `Последнее обновление: ${dateStr}`;
-      }
-    }
+    // Переключение табов
+    tabButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        tabButtons.forEach((b) => b.classList.remove("active"));
+        tabContents.forEach((c) => c.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById(btn.dataset.tab).classList.add("active");
+      });
+    });
 
-    // Загрузить настройки из localStorage
-    function loadSettings() {
-      const status = localStorage.getItem('siteStatus') || 'open';
-      const lastUpdate = localStorage.getItem('lastUpdate');
-      updateSiteStatusDisplay(status);
-      updateLastUpdated(lastUpdate);
-      return status;
-    }
-
-    // Обновить UI (отображение оверлея и кнопок)
     function updateUI() {
-      const status = loadSettings();
-      if (status === 'closed') {
-        overlay.style.display = 'flex';
-        openSiteBtn.style.display = 'inline-block';
+      const siteStatus = localStorage.getItem("siteStatus") || "open";
+      const lastUpdate = localStorage.getItem("lastUpdate");
+      const comment = localStorage.getItem("adminComment") || "";
+
+      siteStatusToggle.checked = siteStatus === "closed";
+      adminComment.value = comment;
+      lastUpdateText.textContent = lastUpdate || "-";
+      adminCommentText.textContent = comment || "-";
+
+      // Показываем или скрываем оверлей закрытия
+      if (siteStatus === "closed") {
+        siteClosedOverlay.style.display = "flex";
+        overlayComment.textContent = comment;
       } else {
-        overlay.style.display = 'none';
-        openSiteBtn.style.display = 'none';
+        siteClosedOverlay.style.display = "none";
       }
     }
 
-    // Клики по кнопкам-карточкам переключают статус
-    btnOpen.addEventListener('click', () => {
-      updateSiteStatusDisplay('open');
-    });
-    btnClosed.addEventListener('click', () => {
-      updateSiteStatusDisplay('closed');
-    });
+    adminOpenBtn.addEventListener("click", openModal);
+    adminCloseBtn.addEventListener("click", closeModal);
 
-    // Открыть админку при Ctrl+Shift+A
-    document.addEventListener('keydown', e => {
-      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
-        e.preventDefault();
-        adminPanel.style.display = 'block';
-        adminCodeInput.value = '';
-        adminCodeInput.focus();
+    adminLoginBtn.addEventListener("click", () => {
+      const code = adminCodeInput.value.trim();
+      if (code === ADMIN_CODE) {
+        // Открываем админку
+        adminLoginSection.style.display = "none";
+        adminPanel.style.display = "block";
+        loginError.classList.add("hidden");
+      } else {
+        loginError.classList.remove("hidden");
       }
     });
 
-    // Закрыть админку
-    adminCloseBtn.addEventListener('click', () => {
-      adminPanel.style.display = 'none';
-      adminCodeInput.value = '';
-    });
-
-    // Кнопка "Открыть сайт"
-    openSiteBtn.addEventListener('click', () => {
-      localStorage.setItem('siteStatus', 'open');
-      localStorage.setItem('lastUpdate', new Date().toLocaleString());
-      updateUI();
-      alert('Сайт открыт!');
-    });
-
-    // Сохранить настройки
-    saveSettingsBtn.addEventListener('click', () => {
+    saveSettingsBtn.addEventListener("click", () => {
       const code = adminCodeInput.value.trim();
       if (code !== ADMIN_CODE) {
-        alert('Неверный код доступа!');
+        alert("Неверный код доступа!");
         return;
       }
-      localStorage.setItem('siteStatus', currentStatus);
-      localStorage.setItem('lastUpdate', new Date().toLocaleString());
-      updateLastUpdated(localStorage.getItem('lastUpdate'));
-      alert('Настройки сохранены!');
-      adminPanel.style.display = 'none';
+      const newStatus = siteStatusToggle.checked ? "closed" : "open";
+      localStorage.setItem("siteStatus", newStatus);
+
+      const now = new Date();
+      const dateString = now.toLocaleString("ru-RU", {
+        dateStyle: "short",
+        timeStyle: "short",
+      });
+      localStorage.setItem("lastUpdate", dateString);
+
+      const commentText = adminComment.value.trim();
+      localStorage.setItem("adminComment", commentText);
+
       updateUI();
+      alert("Настройки сохранены!");
+      closeModal();
     });
 
-    // Сбросить настройки
-    resetSettingsBtn.addEventListener('click', () => {
+    resetSettingsBtn.addEventListener("click", () => {
       const code = adminCodeInput.value.trim();
       if (code !== ADMIN_CODE) {
-        alert('Неверный код доступа!');
+        alert("Неверный код доступа!");
         return;
       }
-      localStorage.removeItem('siteStatus');
-      localStorage.removeItem('lastUpdate');
-      updateSiteStatusDisplay('open');
-      updateLastUpdated(null);
-      alert('Настройки сброшены!');
-      adminPanel.style.display = 'none';
-      updateUI();
+      if (
+        confirm(
+          "Вы действительно хотите сбросить все настройки к значениям по умолчанию?"
+        )
+      ) {
+        localStorage.removeItem("siteStatus");
+        localStorage.removeItem("lastUpdate");
+        localStorage.removeItem("adminComment");
+        updateUI();
+        alert("Настройки сброшены!");
+        closeModal();
+      }
     });
 
-    // Инициализация при загрузке страницы
+    // Кнопка открытия сайта поверх оверлея (при закрытом сайте)
+    overlayOpenBtn.addEventListener("click", () => {
+      const pass = prompt("Введите код администратора для открытия сайта:");
+      if (pass === ADMIN_CODE) {
+        localStorage.setItem("siteStatus", "open");
+        const now = new Date();
+        localStorage.setItem(
+          "lastUpdate",
+          now.toLocaleString("ru-RU", {
+            dateStyle: "short",
+            timeStyle: "short",
+          })
+        );
+        updateUI();
+        alert("Сайт открыт!");
+      } else {
+        alert("Неверный код!");
+      }
+    });
+
+    // Инициализация
     updateUI();
-
   </script>
 </body>
 </html>
