@@ -3,163 +3,235 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Metro New — Статус</title>
+<title>Metro New — Статусы</title>
 <style>
+  /* Базовые стили */
   body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f0f4f8;
-    color: #222;
+    background: #e1e8f0;
+    color: #2c3e50;
     display: flex;
+    flex-direction: column;
     min-height: 100vh;
   }
+
   header {
-    background: #1f2d3d;
-    color: white;
-    padding: 20px 30px;
+    background-color: #34495e;
+    color: #ecf0f1;
+    padding: 18px 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   }
-  .logo {
-    font-size: 24px;
+
+  header .logo {
     font-weight: 700;
+    font-size: 24px;
+    letter-spacing: 2px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
   }
-  .logo img {
-    width: 32px;
-    height: 32px;
+
+  header .logo img {
+    width: 40px;
+    height: 40px;
   }
-  .login {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .login input[type="password"] {
-    padding: 6px 10px;
-    font-size: 16px;
-    border-radius: 4px;
-    border: none;
-    outline: none;
-  }
-  .login button {
-    background: #3498db;
-    border: none;
-    padding: 8px 16px;
-    color: white;
-    font-weight: 600;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  .login button:hover {
-    background: #217dbb;
-  }
+
   main {
-    display: flex;
     flex: 1;
-    padding: 20px 30px;
-    gap: 20px;
-    box-sizing: border-box;
+    padding: 30px 40px;
+    display: flex;
+    gap: 30px;
+    background: #f7f9fc;
   }
+
+  /* Левая колонка */
   .left-panel {
     flex: 3;
     background: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(50,50,93,.1);
+    padding: 30px 30px 40px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
   }
-  .section {
-    margin-bottom: 30px;
-  }
-  .section h2 {
+
+  /* Блоки статусов */
+  .status-block {
     border-bottom: 2px solid #3498db;
-    padding-bottom: 8px;
-    margin-bottom: 15px;
-    font-weight: 700;
-    color: #1f2d3d;
+    padding-bottom: 10px;
   }
-  .status-item {
+
+  .status-block:last-child {
+    border-bottom: none;
+  }
+
+  .status-block h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #2c3e50;
+  }
+
+  .status-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .status-list li {
     display: flex;
     align-items: center;
     gap: 15px;
-    background: #f7f9fc;
-    padding: 12px 15px;
-    border-radius: 6px;
-    margin-bottom: 10px;
+    background: #ecf0f1;
+    margin-bottom: 14px;
+    padding: 14px 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: background-color 0.3s ease;
   }
-  .status-item img {
-    width: 32px;
-    height: 32px;
+
+  .status-list li:hover {
+    background-color: #d6e7fb;
+  }
+
+  .status-list img {
+    width: 36px;
+    height: 36px;
     object-fit: contain;
   }
-  .status-item .name {
+
+  .status-name {
     font-weight: 600;
+    font-size: 17px;
     flex: 1;
+    user-select: none;
   }
-  .status-item .status {
+
+  .status-value {
     font-weight: 700;
-    color: green;
+    font-size: 16px;
+    min-width: 90px;
+    text-align: center;
+    padding: 6px 12px;
+    border-radius: 20px;
+    color: white;
+    user-select: none;
   }
-  .status-item .status.offline {
-    color: red;
+
+  .status-online {
+    background-color: #27ae60;
   }
+
+  .status-offline {
+    background-color: #c0392b;
+  }
+
+  /* Правая колонка */
   .right-panel {
     flex: 1;
     background: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    padding: 28px 26px;
+    box-shadow: 0 6px 15px rgba(50,50,93,.1);
+    font-size: 15px;
+    color: #34495e;
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    font-size: 14px;
-    color: #555;
+    gap: 18px;
   }
+
   .right-panel h3 {
     margin-top: 0;
     font-weight: 700;
-    color: #1f2d3d;
+    font-size: 20px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
   }
-  .info-item {
+
+  .info-row {
     display: flex;
     justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #dce4ec;
   }
+
+  .info-row:last-child {
+    border-bottom: none;
+  }
+
   .info-label {
     font-weight: 600;
   }
-  /* Стили формы админа */
+
+  /* Форма администратора */
   #adminForm {
-    margin-top: 20px;
-    border-top: 1px solid #ccc;
-    padding-top: 15px;
+    margin-top: 25px;
   }
+
   #adminForm label {
     display: block;
-    margin-bottom: 5px;
     font-weight: 600;
-    color: #1f2d3d;
+    margin-top: 12px;
+    margin-bottom: 5px;
+    color: #2c3e50;
   }
+
   #adminForm input[type="text"] {
     width: 100%;
-    padding: 6px 8px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #bdc3c7;
+    font-size: 15px;
     box-sizing: border-box;
   }
+
   #adminForm button {
-    background: #27ae60;
-    color: white;
+    margin-top: 18px;
+    background-color: #2980b9;
     border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 12px;
+    border-radius: 8px;
     cursor: pointer;
-    font-weight: 600;
+    transition: background-color 0.3s;
+    width: 100%;
   }
+
   #adminForm button:hover {
+    background-color: #1b4f72;
+  }
+
+  /* Header input и кнопка */
+  .login input[type="password"] {
+    padding: 7px 12px;
+    border-radius: 6px;
+    border: none;
+    font-size: 16px;
+    outline: none;
+    width: 140px;
+  }
+
+  .login button {
+    margin-left: 10px;
+    padding: 8px 18px;
+    background: #27ae60;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .login button:hover {
     background: #1e8449;
   }
 </style>
@@ -168,8 +240,8 @@
 
 <header>
   <div class="logo">
-    <img src="https://cdn-icons-png.flaticon.com/512/61/61449.png" alt="Metro Icon" />
-    Metro New Статус
+    <img src="https://cdn-icons-png.flaticon.com/512/61/61449.png" alt="Metro New" />
+    Metro New
   </div>
   <div class="login">
     <input type="password" id="adminCode" placeholder="Введите код" />
@@ -179,95 +251,99 @@
 
 <main>
   <div class="left-panel">
-    <div class="section">
-      <h2>Статус серверов</h2>
-
-      <div class="status-item">
-        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord" />
-        <div class="name">Discord Сервер</div>
-        <div class="status" id="discordStatus">🟢 Онлайн</div>
-      </div>
-      <div class="status-item">
-        <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Server" />
-        <div class="name">Сам сервер</div>
-        <div class="status" id="serverStatus">🟢 Онлайн</div>
-      </div>
-      <div class="status-item">
-        <img src="https://cdn-icons-png.flaticon.com/512/1384/1384063.png" alt="Chat" />
-        <div class="name">Чат</div>
-        <div class="status" id="chatStatus">🟢 Онлайн</div>
-      </div>
-      <div class="status-item">
-        <img src="https://cdn-icons-png.flaticon.com/512/565/565547.png" alt="Settings" />
-        <div class="name">Другие настройки</div>
-        <div class="status" id="otherSettingsStatus">🟢 Онлайн</div>
-      </div>
+    <div class="status-block">
+      <h2>Discord Сервер</h2>
+      <ul class="status-list">
+        <li>
+          <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord" />
+          <div class="status-name">Статус</div>
+          <div class="status-value status-online" id="discordStatus">Онлайн</div>
+        </li>
+      </ul>
     </div>
 
-    <div class="section">
-      <h2>Веб-сайт</h2>
-      <div class="status-item">
-        <img src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png" alt="Website" />
-        <div class="name">Основной сайт</div>
-        <div class="status" id="websiteStatus">🟢 Работает</div>
-      </div>
+    <div class="status-block">
+      <h2>Игры в Roblox</h2>
+      <ul class="status-list">
+        <li>
+          <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Roblox" />
+          <div class="status-name">Сервер игры</div>
+          <div class="status-value status-online" id="robloxStatus">Онлайн</div>
+        </li>
+      </ul>
     </div>
 
-    <div class="section">
-      <h2>Телеграм канал</h2>
-      <div class="status-item">
-        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" />
-        <div class="name">Канал</div>
-        <div class="status" id="telegramStatus">🟢 Доступен</div>
-      </div>
+    <div class="status-block">
+      <h2>Ютуб Канал</h2>
+      <ul class="status-list">
+        <li>
+          <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" />
+          <div class="status-name">Видео и стримы</div>
+          <div class="status-value status-online" id="youtubeStatus">Активен</div>
+        </li>
+      </ul>
     </div>
 
-    <div class="section">
-      <h2>Игровые сервера</h2>
-      <div class="status-item">
-        <img src="https://cdn-icons-png.flaticon.com/512/1674/1674291.png" alt="Game Server" />
-        <div class="name">Minecraft сервер</div>
-        <div class="status" id="mcServerStatus">🟢 Онлайн</div>
-      </div>
-      <div class="status-item">
-        <img src="https://cdn-icons-png.flaticon.com/512/1674/1674301.png" alt="Game Server" />
-        <div class="name">CS2 сервер</div>
-        <div class="status offline" id="cs2ServerStatus">🔴 Оффлайн</div>
-      </div>
+    <div class="status-block">
+      <h2>Телеграм</h2>
+      <ul class="status-list">
+        <li>
+          <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" />
+          <div class="status-name">Канал и чат</div>
+          <div class="status-value status-online" id="telegramStatus">Активен</div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="status-block">
+      <h2>Сайт</h2>
+      <ul class="status-list">
+        <li>
+          <img src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png" alt="Website" />
+          <div class="status-name">API</div>
+          <div class="status-value status-online" id="apiStatus">Работает</div>
+        </li>
+        <li>
+          <img src="https://cdn-icons-png.flaticon.com/512/565/565547.png" alt="Settings" />
+          <div class="status-name">Работа сайта</div>
+          <div class="status-value status-online" id="siteStatus">Онлайн</div>
+        </li>
+        <li>
+          <img src="https://cdn-icons-png.flaticon.com/512/565/565547.png" alt="Settings" />
+          <div class="status-name">Другие настройки</div>
+          <div class="status-value status-online" id="otherSettingsStatus">Включены</div>
+        </li>
+      </ul>
     </div>
   </div>
 
   <div class="right-panel" id="infoPanel">
     <h3>Информация о проекте</h3>
-    <div class="info-item"><div class="info-label">Дата запуска:</div> <div id="launchDate">20 марта 2024</div></div>
-    <div class="info-item"><div class="info-label">Онлайн игроков:</div> <div id="onlinePlayers">Загрузка...</div></div>
-    <div class="info-item"><div class="info-label">Последнее обновление:</div> <div id="lastUpdate">Загрузка...</div></div>
-    <div class="info-item"><div class="info-label">Следующее обновление:</div> <div id="nextUpdate">Загрузка...</div></div>
+    <div class="info-row"><div class="info-label">Дата запуска:</div> <div id="launchDate">20 марта 2024</div></div>
+    <div class="info-row"><div class="info-label">Онлайн игроков:</div> <div id="onlinePlayers">Загрузка...</div></div>
+    <div class="info-row"><div class="info-label">Последнее обновление:</div> <div id="lastUpdate">Загрузка...</div></div>
+    <div class="info-row"><div class="info-label">Следующее обновление:</div> <div id="nextUpdate">Загрузка...</div></div>
   </div>
 </main>
 
 <script>
-  // Ключ для localStorage
   const STORAGE_KEY = 'metroNewStatusData';
 
-  // Данные по умолчанию
   const defaultData = {
-    onlinePlayers: '120',
-    lastUpdate: '5 августа 2025, 18:00',
-    nextUpdate: '10 августа 2025, 12:00',
+    onlinePlayers: '100',
+    lastUpdate: '7 августа 2025, 19:00',
+    nextUpdate: '12 августа 2025, 15:00',
     statuses: {
-      discordStatus: '🟢 Онлайн',
-      serverStatus: '🟢 Онлайн',
-      chatStatus: '🟢 Онлайн',
-      otherSettingsStatus: '🟢 Онлайн',
-      websiteStatus: '🟢 Работает',
-      telegramStatus: '🟢 Доступен',
-      mcServerStatus: '🟢 Онлайн',
-      cs2ServerStatus: '🔴 Оффлайн',
+      discordStatus: 'Онлайн',
+      robloxStatus: 'Онлайн',
+      youtubeStatus: 'Активен',
+      telegramStatus: 'Активен',
+      apiStatus: 'Работает',
+      siteStatus: 'Онлайн',
+      otherSettingsStatus: 'Включены',
     }
   };
 
-  // Загружаем данные из localStorage или используем дефолт
   let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultData;
 
   function updateDisplay() {
@@ -275,85 +351,81 @@
     document.getElementById('lastUpdate').textContent = data.lastUpdate;
     document.getElementById('nextUpdate').textContent = data.nextUpdate;
 
-    for (const key in data.statuses) {
-      const el = document.getElementById(key);
-      if (!el) continue;
-      el.textContent = data.statuses[key];
-      if(data.statuses[key].toLowerCase().includes('🔴')) {
-        el.classList.add('offline');
-        el.classList.remove('status');
-      } else {
-        el.classList.remove('offline');
-        el.classList.add('status');
-      }
+    updateStatus('discordStatus', data.statuses.discordStatus);
+    updateStatus('robloxStatus', data.statuses.robloxStatus);
+    updateStatus('youtubeStatus', data.statuses.youtubeStatus);
+    updateStatus('telegramStatus', data.statuses.telegramStatus);
+    updateStatus('apiStatus', data.statuses.apiStatus);
+    updateStatus('siteStatus', data.statuses.siteStatus);
+    updateStatus('otherSettingsStatus', data.statuses.otherSettingsStatus);
+  }
+
+  function updateStatus(id, status) {
+    const el = document.getElementById(id);
+    el.textContent = status;
+    if (
+      ['онлайн', 'активен', 'работает', 'включены'].includes(status.toLowerCase())
+    ) {
+      el.classList.remove('status-offline');
+      el.classList.add('status-online');
+    } else {
+      el.classList.remove('status-online');
+      el.classList.add('status-offline');
     }
   }
 
   updateDisplay();
 
+  // Админка с кодом 2255
   function checkCode() {
-    const input = document.getElementById('adminCode');
-    const code = input.value.trim();
-    if(code === '2255') {
-      alert('Вход успешен! Админ режим активирован.');
-      input.value = '';
+    const codeInput = document.getElementById('adminCode');
+    if (codeInput.value === '2255') {
       showAdminForm();
     } else {
-      alert('Неверный код!');
-      input.value = '';
+      alert('Неверный код доступа');
     }
   }
 
   function showAdminForm() {
-    const infoPanel = document.getElementById('infoPanel');
+    const panel = document.getElementById('infoPanel');
+    panel.innerHTML = `
+      <h3>Администрирование</h3>
+      <form id="adminForm">
+        <label for="onlinePlayersInput">Онлайн игроков:</label>
+        <input type="text" id="onlinePlayersInput" value="${data.onlinePlayers}" />
 
-    if(document.getElementById('adminForm')) return;
+        <label for="lastUpdateInput">Последнее обновление:</label>
+        <input type="text" id="lastUpdateInput" value="${data.lastUpdate}" />
 
-    const form = document.createElement('form');
-    form.id = 'adminForm';
+        <label for="nextUpdateInput">Следующее обновление:</label>
+        <input type="text" id="nextUpdateInput" value="${data.nextUpdate}" />
 
-    form.innerHTML = `
-      <h3>Админ панель</h3>
+        <label for="discordStatusInput">Discord статус:</label>
+        <input type="text" id="discordStatusInput" value="${data.statuses.discordStatus}" />
 
-      <label for="onlinePlayersInput">Онлайн игроков</label>
-      <input type="text" id="onlinePlayersInput" value="${data.onlinePlayers}" />
+        <label for="robloxStatusInput">Roblox статус:</label>
+        <input type="text" id="robloxStatusInput" value="${data.statuses.robloxStatus}" />
 
-      <label for="lastUpdateInput">Последнее обновление</label>
-      <input type="text" id="lastUpdateInput" value="${data.lastUpdate}" />
+        <label for="youtubeStatusInput">YouTube статус:</label>
+        <input type="text" id="youtubeStatusInput" value="${data.statuses.youtubeStatus}" />
 
-      <label for="nextUpdateInput">Следующее обновление</label>
-      <input type="text" id="nextUpdateInput" value="${data.nextUpdate}" />
+        <label for="telegramStatusInput">Telegram статус:</label>
+        <input type="text" id="telegramStatusInput" value="${data.statuses.telegramStatus}" />
 
-      <h4>Статусы серверов</h4>
+        <label for="apiStatusInput">API статус:</label>
+        <input type="text" id="apiStatusInput" value="${data.statuses.apiStatus}" />
 
-      <label for="discordStatusInput">Discord Сервер</label>
-      <input type="text" id="discordStatusInput" value="${data.statuses.discordStatus}" />
+        <label for="siteStatusInput">Статус сайта:</label>
+        <input type="text" id="siteStatusInput" value="${data.statuses.siteStatus}" />
 
-      <label for="serverStatusInput">Сам сервер</label>
-      <input type="text" id="serverStatusInput" value="${data.statuses.serverStatus}" />
+        <label for="otherSettingsStatusInput">Другие настройки:</label>
+        <input type="text" id="otherSettingsStatusInput" value="${data.statuses.otherSettingsStatus}" />
 
-      <label for="chatStatusInput">Чат</label>
-      <input type="text" id="chatStatusInput" value="${data.statuses.chatStatus}" />
-
-      <label for="otherSettingsStatusInput">Другие настройки</label>
-      <input type="text" id="otherSettingsStatusInput" value="${data.statuses.otherSettingsStatus}" />
-
-      <label for="websiteStatusInput">Веб-сайт</label>
-      <input type="text" id="websiteStatusInput" value="${data.statuses.websiteStatus}" />
-
-      <label for="telegramStatusInput">Телеграм канал</label>
-      <input type="text" id="telegramStatusInput" value="${data.statuses.telegramStatus}" />
-
-      <label for="mcServerStatusInput">Minecraft сервер</label>
-      <input type="text" id="mcServerStatusInput" value="${data.statuses.mcServerStatus}" />
-
-      <label for="cs2ServerStatusInput">CS2 сервер</label>
-      <input type="text" id="cs2ServerStatusInput" value="${data.statuses.cs2ServerStatus}" />
-
-      <button type="submit">Сохранить изменения</button>
+        <button type="submit">Сохранить изменения</button>
+      </form>
     `;
 
-    form.addEventListener('submit', (e) => {
+    document.getElementById('adminForm').addEventListener('submit', (e) => {
       e.preventDefault();
 
       data.onlinePlayers = document.getElementById('onlinePlayersInput').value.trim();
@@ -361,21 +433,17 @@
       data.nextUpdate = document.getElementById('nextUpdateInput').value.trim();
 
       data.statuses.discordStatus = document.getElementById('discordStatusInput').value.trim();
-      data.statuses.serverStatus = document.getElementById('serverStatusInput').value.trim();
-      data.statuses.chatStatus = document.getElementById('chatStatusInput').value.trim();
-      data.statuses.otherSettingsStatus = document.getElementById('otherSettingsStatusInput').value.trim();
-      data.statuses.websiteStatus = document.getElementById('websiteStatusInput').value.trim();
+      data.statuses.robloxStatus = document.getElementById('robloxStatusInput').value.trim();
+      data.statuses.youtubeStatus = document.getElementById('youtubeStatusInput').value.trim();
       data.statuses.telegramStatus = document.getElementById('telegramStatusInput').value.trim();
-      data.statuses.mcServerStatus = document.getElementById('mcServerStatusInput').value.trim();
-      data.statuses.cs2ServerStatus = document.getElementById('cs2ServerStatusInput').value.trim();
+      data.statuses.apiStatus = document.getElementById('apiStatusInput).value.trim();
+      data.statuses.siteStatus = document.getElementById('siteStatusInput').value.trim();
+      data.statuses.otherSettingsStatus = document.getElementById('otherSettingsStatusInput').value.trim();
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-
       updateDisplay();
       alert('Данные успешно сохранены!');
     });
-
-    infoPanel.appendChild(form);
   }
 </script>
 
