@@ -3,556 +3,358 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Metro New Статусы с Вкладками и Анимациями</title>
+<title>Админка с паролем и сервисами</title>
 <style>
-  /* Общие стили */
-  body, html {
-    margin: 0; padding: 0; min-height: 100vh;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f7ff;
-    color: #222;
-  }
-  header {
-    background: linear-gradient(90deg, #4f46e5, #3b82f6);
-    color: white;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: fixed;
-    width: 100%;
-    top: 0; left: 0;
-    box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
-    z-index: 1000;
-  }
-  header h1 {
-    margin: 0; font-weight: 700; font-size: 24px;
-    user-select: none;
+  body {
+    font-family: Arial, sans-serif;
+    background: #121212;
+    color: #eee;
+    margin: 0; padding: 0;
   }
   #adminButton {
+    position: fixed;
+    top: 10px;
+    right: 15px;
+    font-size: 26px;
     background: transparent;
     border: none;
-    color: white;
-    font-size: 26px;
+    color: #eee;
     cursor: pointer;
-    user-select: none;
-    transition: transform 0.3s ease;
+    z-index: 1000;
+    transition: color 0.3s;
   }
   #adminButton:hover {
-    transform: rotate(90deg);
+    color: #61dafb;
   }
-
-  main {
-    max-width: 900px;
-    margin: 90px auto 40px;
-    padding: 0 20px;
+  #passwordOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1500;
   }
-  #siteClosedBanner {
-    background: #fee2e2;
-    color: #b91c1c;
-    border: 1px solid #fca5a5;
-    padding: 10px 15px;
-    border-radius: 6px;
-    margin-bottom: 25px;
-    font-weight: 600;
-    display: none;
+  #passwordBox {
+    background: #222;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px #61dafb;
     text-align: center;
-    animation: fadeInDown 0.6s ease forwards;
+    width: 320px;
   }
-  .statuses {
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
-    gap: 18px;
+  #passwordBox h2 {
+    margin: 0 0 15px;
+    color: #61dafb;
   }
-  .status-item {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgb(0 0 0 / 0.07);
-    padding: 15px 20px;
+  #adminPassword {
+    width: 100%;
+    padding: 10px;
+    font-size: 18px;
+    border: none;
+    border-radius: 4px;
+    outline: none;
+  }
+  #passwordError {
+    color: #ff4c4c;
+    margin-top: 10px;
+    display: none;
+  }
+  #adminPanel {
+    display: none;
+    position: fixed;
+    top: 50px;
+    right: 15px;
+    width: 420px;
+    height: 650px;
+    background: #1e1e1e;
+    border-radius: 10px;
+    box-shadow: 0 0 20px #61dafb;
+    padding: 15px;
+    overflow-y: auto;
+    z-index: 1200;
+  }
+  .service {
+    margin-bottom: 30px;
+  }
+  .service h3 {
+    margin: 0 0 10px;
+    border-bottom: 2px solid #61dafb;
+    padding-bottom: 6px;
     display: flex;
     align-items: center;
-    gap: 15px;
-    font-weight: 600;
-    font-size: 18px;
-    opacity: 0;
-    transform: translateY(15px);
-    animation: fadeUp 0.5s forwards;
+    gap: 10px;
   }
-  .status-item:nth-child(1) { animation-delay: 0.1s; }
-  .status-item:nth-child(2) { animation-delay: 0.2s; }
-  .status-item:nth-child(3) { animation-delay: 0.3s; }
-  .status-item:nth-child(4) { animation-delay: 0.4s; }
-  .status-item:nth-child(5) { animation-delay: 0.5s; }
-
-  .status-item svg {
-    width: 30px; height: 30px;
-    flex-shrink: 0;
+  .service h3 svg {
+    width: 24px;
+    height: 24px;
+    fill: #61dafb;
   }
-  .online {
-    color: #16a34a;
-  }
-  .offline {
-    color: #dc2626;
-  }
-
-  /* Анимации */
-  @keyframes fadeUp {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  @keyframes fadeInDown {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* Админка */
-  #adminPanel {
-    position: fixed;
-    top: 60px; right: 20px;
-    width: 340px;
-    background: white;
-    box-shadow: 0 5px 20px rgb(0 0 0 / 0.3);
-    border-radius: 14px;
-    padding: 15px;
-    display: none;
-    z-index: 1100;
-    user-select: none;
-  }
-  #adminPanel h2 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 22px;
-    text-align: center;
-    color: #4f46e5;
-    user-select: text;
-  }
-
-  /* Вкладки */
-  .tab-buttons {
+  .tabs {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
+    gap: 10px;
+    margin-bottom: 12px;
   }
-  .tab-buttons button {
+  .tab-btn {
     flex: 1;
-    padding: 10px 0;
+    background: #333;
     border: none;
-    background: #e0e7ff;
-    color: #4f46e5;
-    font-weight: 600;
+    padding: 8px 12px;
+    color: #ccc;
+    font-weight: bold;
+    border-radius: 6px;
     cursor: pointer;
-    border-radius: 10px 10px 0 0;
-    margin-right: 4px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s, color 0.3s;
     user-select: none;
   }
-  .tab-buttons button:last-child {
-    margin-right: 0;
-  }
-  .tab-buttons button.active {
-    background: #4f46e5;
-    color: white;
-    box-shadow: 0 3px 10px rgb(79 70 229 / 0.4);
+  .tab-btn.active {
+    background: #61dafb;
+    color: #121212;
   }
   .tab-content {
-    background: #f9fafb;
-    border-radius: 0 14px 14px 14px;
-    padding: 15px 20px;
-    box-shadow: inset 0 0 6px rgb(0 0 0 / 0.05);
-    max-height: 360px;
-    overflow-y: auto;
+    background: #222;
+    padding: 12px 16px;
+    border-radius: 6px;
+    color: #ddd;
+    font-size: 14px;
   }
-  /* Стиль для меток и чекбоксов */
+  .tab-content[hidden] {
+    display: none;
+  }
   label {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 14px;
-    font-weight: 600;
-    font-size: 16px;
+    gap: 10px;
+    margin-bottom: 12px;
     cursor: pointer;
-    user-select: none;
   }
   input[type="checkbox"] {
-    transform: scale(1.3);
+    width: 18px;
+    height: 18px;
     cursor: pointer;
   }
-  input[type="password"] {
-    width: 100%;
-    padding: 8px 10px;
-    margin-bottom: 15px;
-    font-size: 16px;
+  button.save-btn, button.reset-btn {
+    width: 48%;
+    padding: 10px;
+    margin: 10px 1% 20px 1%;
+    border: none;
     border-radius: 6px;
-    border: 1px solid #ccc;
-    user-select: text;
-  }
-  #errorMsg {
-    color: #dc2626;
-    font-weight: 600;
-    margin-bottom: 12px;
-    display: none;
-    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    color: #121212;
+    transition: background-color 0.3s;
   }
   button.save-btn {
-    background: #4f46e5;
-    color: white;
-    border: none;
-    width: 100%;
-    padding: 11px 0;
-    font-weight: 700;
-    font-size: 16px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    user-select: none;
+    background-color: #61dafb;
   }
   button.save-btn:hover {
-    background: #4338ca;
+    background-color: #4fc3f7;
   }
   button.reset-btn {
-    margin-top: 12px;
-    background: #dc2626;
-    border: none;
-    width: 100%;
-    padding: 11px 0;
-    font-weight: 700;
-    font-size: 16px;
-    border-radius: 10px;
-    cursor: pointer;
-    color: white;
-    transition: background-color 0.3s ease;
-    user-select: none;
+    background-color: #ff4c4c;
   }
   button.reset-btn:hover {
-    background: #b91c1c;
+    background-color: #e04343;
   }
-
-  /* Иконки */
-  svg.online-icon {
-    fill: #16a34a;
+  /* Scrollbar for adminPanel */
+  #adminPanel::-webkit-scrollbar {
+    width: 8px;
   }
-  svg.offline-icon {
-    fill: #dc2626;
-  }
-
-  /* Серверный статус (заглушка) */
-  .server-status {
-    font-size: 14px;
-    font-weight: 600;
-    color: #444;
-    padding: 10px 0;
-  }
-  .server-status span {
-    font-weight: 700;
-    color: #4f46e5;
+  #adminPanel::-webkit-scrollbar-thumb {
+    background-color: #61dafb;
+    border-radius: 10px;
   }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>Metro New Статусы</h1>
-  <button id="adminButton" title="Открыть админку" aria-label="Админ панель">⚙️</button>
-</header>
+<button id="adminButton" title="Открыть админку">⚙️</button>
 
-<main>
-  <div id="siteClosedBanner">⚠️ Внимание: сайт закрыт на технические работы</div>
-
-  <div class="statuses" id="statusesContainer">
-    <!-- Статусы будут тут -->
+<div id="passwordOverlay" role="dialog" aria-modal="true" aria-labelledby="passwordTitle">
+  <div id="passwordBox">
+    <h2 id="passwordTitle">Введите пароль администратора</h2>
+    <input type="password" id="adminPassword" autocomplete="off" aria-describedby="passwordError" />
+    <div id="passwordError" role="alert">Неверный пароль, попробуйте снова.</div>
   </div>
-</main>
+</div>
 
-<div id="adminPanel" role="dialog" aria-modal="true" aria-labelledby="adminPanelTitle" aria-hidden="true">
-  <h2 id="adminPanelTitle">Админ панель</h2>
-
-  <input type="password" id="adminPassword" placeholder="Введите пароль" aria-label="Пароль админа" />
-  <div id="errorMsg">Неверный пароль</div>
-
-  <div class="tab-buttons" role="tablist" aria-label="Вкладки админ панели">
-    <button class="tab-btn active" data-tab="mainSettings" role="tab" aria-selected="true" tabindex="0">Основные</button>
-    <button class="tab-btn" data-tab="onlineSettings" role="tab" aria-selected="false" tabindex="-1">Онлайн</button>
-    <button class="tab-btn" data-tab="serverSettings" role="tab" aria-selected="false" tabindex="-1">Сам сервер</button>
-    <button class="tab-btn" data-tab="otherSettings" role="tab" aria-selected="false" tabindex="-1">Другие</button>
-  </div>
-
-  <div id="mainSettings" class="tab-content" role="tabpanel">
-    <label>
-      Закрыть сайт на технические работы
-      <input type="checkbox" id="siteClosedCheckbox" />
-    </label>
-    <label>
-      Показывать уведомления при закрытии
-      <input type="checkbox" id="showNotificationCheckbox" />
-    </label>
-  </div>
-
-  <div id="onlineSettings" class="tab-content" role="tabpanel" hidden>
-    <label>
+<div id="adminPanel" role="region" aria-label="Панель администратора">
+  <!-- Discord -->
+  <div class="service" data-service="discord">
+    <h3>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.61 15.75c-1.04 0-1.89-.95-1.89-2.12s.84-2.11 1.89-2.11c1.05 0 1.9.95 1.9 2.12 0 1.18-.85 2.11-1.9 2.11zm8.77 0c-1.04 0-1.9-.95-1.9-2.12s.85-2.11 1.9-2.11c1.05 0 1.9.95 1.9 2.12 0 1.18-.85 2.11-1.9 2.11zM12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.82 8.21 11.39.6.11.81-.26.81-.58 0-.29-.01-1.05-.02-2.06-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.32-1.75-1.32-1.75-1.08-.74.08-.72.08-.72 1.19.08 1.81 1.22 1.81 1.22 1.06 1.82 2.78 1.29 3.46.99.11-.78.42-1.29.76-1.59-2.66-.3-5.45-1.33-5.45-5.9 0-1.3.47-2.36 1.22-3.19-.12-.3-.53-1.51.12-3.15 0 0 .99-.32 3.24 1.21a11.25 11.25 0 0 1 2.95-.4c1 .01 2 .14 2.95.41 2.24-1.54 3.23-1.21 3.23-1.21.65 1.64.24 2.85.12 3.15.76.83 1.22 1.89 1.22 3.19 0 4.58-2.8 5.6-5.46 5.9.43.37.81 1.1.81 2.22 0 1.61-.01 2.91-.01 3.3 0 .32.21.69.82.58C20.56 21.82 24 17.3 24 12c0-6.63-5.37-12-12-12Z"/></svg>
       Discord сервер
-      <input type="checkbox" id="discordStatusCheckbox" />
-    </label>
-    <label>
+    </h3>
+    <div class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="discord-main" role="tab" aria-selected="true">Основные настройки</button>
+      <button class="tab-btn" data-tab="discord-server" role="tab" aria-selected="false">Сам сервер</button>
+      <button class="tab-btn" data-tab="discord-other" role="tab" aria-selected="false">Другие</button>
+    </div>
+    <div id="discord-main" class="tab-content" role="tabpanel">
+      <label><input type="checkbox" id="discordOnline" /> Онлайн</label>
+    </div>
+    <div id="discord-server" class="tab-content" hidden role="tabpanel">
+      <p>Статус сервера Discord: <b id="discordServerStatus">Онлайн</b></p>
+      <p>Пинг: <b>32ms</b></p>
+      <p>Нагрузка: <b>45%</b></p>
+    </div>
+    <div id="discord-other" class="tab-content" hidden role="tabpanel">
+      <p>Другие настройки Discord...</p>
+    </div>
+  </div>
+
+  <!-- Roblox -->
+  <div class="service" data-service="roblox">
+    <h3>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2L17 12 7 22z"/></svg>
       Roblox игры
-      <input type="checkbox" id="robloxStatusCheckbox" />
-    </label>
-    <label>
+    </h3>
+    <div class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="roblox-main" role="tab" aria-selected="true">Основные настройки</button>
+      <button class="tab-btn" data-tab="roblox-server" role="tab" aria-selected="false">Сам сервер</button>
+      <button class="tab-btn" data-tab="roblox-other" role="tab" aria-selected="false">Другие</button>
+    </div>
+    <div id="roblox-main" class="tab-content" role="tabpanel">
+      <label><input type="checkbox" id="robloxOnline" /> Онлайн</label>
+    </div>
+    <div id="roblox-server" class="tab-content" hidden role="tabpanel">
+      <p>Статус сервера Roblox: <b id="robloxServerStatus">Онлайн</b></p>
+      <p>Пинг: <b>45ms</b></p>
+      <p>Нагрузка: <b>52%</b></p>
+    </div>
+    <div id="roblox-other" class="tab-content" hidden role="tabpanel">
+      <p>Другие настройки Roblox...</p>
+    </div>
+  </div>
+
+  <!-- YouTube -->
+  <div class="service" data-service="youtube">
+    <h3>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.615 3.184c-.957-.351-5.133-.351-5.133-.351s-4.19 0-5.13.351c-.914.336-1.52 1.266-1.52 3.56v5.448c0 2.292.606 3.22 1.52 3.557.94.35 5.133.35 5.133.35s4.178 0 5.133-.35c.918-.338 1.522-1.267 1.522-3.558v-5.45c0-2.292-.604-3.22-1.52-3.558zM10.538 14.58v-5.43l4.613 2.716-4.613 2.715z"/></svg>
       YouTube канал
-      <input type="checkbox" id="youtubeStatusCheckbox" />
-    </label>
-    <label>
+    </h3>
+    <div class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="youtube-main" role="tab" aria-selected="true">Основные настройки</button>
+      <button class="tab-btn" data-tab="youtube-server" role="tab" aria-selected="false">Сам сервер</button>
+      <button class="tab-btn" data-tab="youtube-other" role="tab" aria-selected="false">Другие</button>
+    </div>
+    <div id="youtube-main" class="tab-content" role="tabpanel">
+      <label><input type="checkbox" id="youtubeOnline" /> Онлайн</label>
+    </div>
+    <div id="youtube-server" class="tab-content" hidden role="tabpanel">
+      <p>Статус YouTube: <b>Активен</b></p>
+      <p>Подписчики: <b>12345</b></p>
+    </div>
+    <div id="youtube-other" class="tab-content" hidden role="tabpanel">
+      <p>Другие настройки YouTube...</p>
+    </div>
+  </div>
+
+  <!-- Telegram -->
+  <div class="service" data-service="telegram">
+    <h3>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12l20-7-11 9-4 3z"/></svg>
       Телеграм канал
-      <input type="checkbox" id="telegramStatusCheckbox" />
-    </label>
-    <label>
+    </h3>
+    <div class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="telegram-main" role="tab" aria-selected="true">Основные настройки</button>
+      <button class="tab-btn" data-tab="telegram-server" role="tab" aria-selected="false">Сам сервер</button>
+      <button class="tab-btn" data-tab="telegram-other" role="tab" aria-selected="false">Другие</button>
+    </div>
+    <div id="telegram-main" class="tab-content" role="tabpanel">
+      <label><input type="checkbox" id="telegramOnline" /> Онлайн</label>
+    </div>
+    <div id="telegram-server" class="tab-content" hidden role="tabpanel">
+      <p>Статус Telegram: <b>Активен</b></p>
+      <p>Подписчики: <b>6789</b></p>
+    </div>
+    <div id="telegram-other" class="tab-content" hidden role="tabpanel">
+      <p>Другие настройки Telegram...</p>
+    </div>
+  </div>
+
+  <!-- Сайт -->
+  <div class="service" data-service="website">
+    <h3>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="#61dafb" stroke-width="2" fill="none"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20" stroke="#61dafb" stroke-width="2"/></svg>
       Сайт
-      <input type="checkbox" id="websiteStatusCheckbox" />
-    </label>
+    </h3>
+    <div class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="website-main" role="tab" aria-selected="true">Основные настройки</button>
+      <button class="tab-btn" data-tab="website-server" role="tab" aria-selected="false">Сам сервер</button>
+      <button class="tab-btn" data-tab="website-other" role="tab" aria-selected="false">Другие</button>
+    </div>
+    <div id="website-main" class="tab-content" role="tabpanel">
+      <label><input type="checkbox" id="websiteOnline" /> Онлайн</label>
+    </div>
+    <div id="website-server" class="tab-content" hidden role="tabpanel">
+      <p>Статус сайта: <b>Работает</b></p>
+      <p>Загрузка сервера: <b>33%</b></p>
+    </div>
+    <div id="website-other" class="tab-content" hidden role="tabpanel">
+      <p>Другие настройки сайта...</p>
+    </div>
   </div>
-
-  <div id="serverSettings" class="tab-content" role="tabpanel" hidden>
-    <div class="server-status">Статус сервера: <span id="serverStatusText">Онлайн</span></div>
-    <div class="server-status">Пинг: <span id="serverPing">35ms</span></div>
-    <div class="server-status">Нагрузка: <span id="serverLoad">42%</span></div>
-  </div>
-
-  <div id="otherSettings" class="tab-content" role="tabpanel" hidden>
-    <p>Здесь могут быть другие настройки...</p>
-  </div>
-
-  <button class="save-btn" id="saveSettingsButton">Сохранить настройки</button>
-  <button class="reset-btn" id="resetSettingsButton">Сбросить настройки</button>
 </div>
 
 <script>
+  const adminButton = document.getElementById('adminButton');
+  const passwordOverlay = document.getElementById('passwordOverlay');
+  const adminPasswordInput = document.getElementById('adminPassword');
+  const passwordError = document.getElementById('passwordError');
+  const adminPanel = document.getElementById('adminPanel');
+
   const ADMIN_PASSWORD = '1234';
 
-  // Элементы
-  const adminButton = document.getElementById('adminButton');
-  const adminPanel = document.getElementById('adminPanel');
-  const adminPasswordInput = document.getElementById('adminPassword');
-  const errorMsg = document.getElementById('errorMsg');
-
-  const siteClosedBanner = document.getElementById('siteClosedBanner');
-  const statusesContainer = document.getElementById('statusesContainer');
-
-  const siteClosedCheckbox = document.getElementById('siteClosedCheckbox');
-  const showNotificationCheckbox = document.getElementById('showNotificationCheckbox');
-
-  const discordStatusCheckbox = document.getElementById('discordStatusCheckbox');
-  const robloxStatusCheckbox = document.getElementById('robloxStatusCheckbox');
-  const youtubeStatusCheckbox = document.getElementById('youtubeStatusCheckbox');
-  const telegramStatusCheckbox = document.getElementById('telegramStatusCheckbox');
-  const websiteStatusCheckbox = document.getElementById('websiteStatusCheckbox');
-
-  const saveSettingsButton = document.getElementById('saveSettingsButton');
-  const resetSettingsButton = document.getElementById('resetSettingsButton');
-
-  // Вкладки
-  const tabButtons = document.querySelectorAll('.tab-btn');
-  const tabContents = document.querySelectorAll('.tab-content');
-
-  // Ключи localStorage
-  const statusKeys = {
-    siteClosed: 'status_siteClosed',
-    showNotification: 'status_showNotification',
-    discord: 'status_discord',
-    roblox: 'status_roblox',
-    youtube: 'status_youtube',
-    telegram: 'status_telegram',
-    website: 'status_website'
-  };
-
-  // Иконки (онлайн/оффлайн) с цветом
-  const icons = {
-    discord: `<svg class="online-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M7.61 15.75c-1.04 0-1.89-.95-1.89-2.12s.84-2.11 1.89-2.11c1.05 0 1.9.95 1.9 2.12 0 1.18-.85 2.11-1.9 2.11zm8.77 0c-1.04 0-1.9-.95-1.9-2.12s.85-2.11 1.9-2.11c1.05 0 1.9.95 1.9 2.12 0 1.18-.85 2.11-1.9 2.11zM12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.82 8.21 11.39.6.11.81-.26.81-.58 0-.29-.01-1.05-.02-2.06-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.32-1.75-1.32-1.75-1.08-.74.08-.72.08-.72 1.19.08 1.81 1.22 1.81 1.22 1.06 1.82 2.78 1.29 3.46.99.11-.78.42-1.29.76-1.59-2.66-.3-5.45-1.33-5.45-5.9 0-1.3.47-2.36 1.22-3.19-.12-.3-.53-1.51.12-3.15 0 0 .99-.32 3.24 1.21a11.25 11.25 0 0 1 2.95-.4c1 .01 2 .14 2.95.41 2.24-1.54 3.23-1.21 3.23-1.21.65 1.64.24 2.85.12 3.15.76.83 1.22 1.89 1.22 3.19 0 4.58-2.8 5.6-5.46 5.9.43.37.81 1.1.81 2.22 0 1.61-.01 2.91-.01 3.3 0 .32.21.69.82.58C20.56 21.82 24 17.3 24 12c0-6.63-5.37-12-12-12Z"/></svg>`,
-    roblox: `<svg class="online-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M7 2L17 12 7 22z"/></svg>`,
-    youtube: `<svg class="online-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M19.615 3.184c-.957-.351-5.133-.351-5.133-.351s-4.19 0-5.13.351c-.914.336-1.52 1.266-1.52 3.56v5.448c0 2.292.606 3.22 1.52 3.557.94.35 5.133.35 5.133.35s4.178 0 5.133-.35c.918-.338 1.522-1.267 1.522-3.558v-5.45c0-2.292-.604-3.22-1.52-3.558zM10.538 14.58v-5.43l4.613 2.716-4.613 2.715z"/></svg>`,
-    telegram: `<svg class="online-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M9.993 16.179c-.304 0-.38-.138-.516-.487l-1.789-5.38-1.74-.575c-.373-.123-.381-.373.08-.54l8.812-3.4c.41-.158.77.095.62.572l-1.66 7.72c-.123.55-.45.692-.79.43l-2.017-1.68-1.27 1.23c-.152.145-.28.269-.5.269z"/></svg>`,
-    website: `<svg class="online-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>`
-  };
-
-  const serviceLabels = {
-    discord: 'Discord сервер',
-    roblox: 'Roblox игры',
-    youtube: 'YouTube канал',
-    telegram: 'Телеграм канал',
-    website: 'Сайт'
-  };
-
-  // Загрузка настроек
-  function loadSettings() {
-    return {
-      siteClosed: JSON.parse(localStorage.getItem(statusKeys.siteClosed)) || false,
-      showNotification: JSON.parse(localStorage.getItem(statusKeys.showNotification)) ?? true,
-      discord: JSON.parse(localStorage.getItem(statusKeys.discord)) ?? true,
-      roblox: JSON.parse(localStorage.getItem(statusKeys.roblox)) ?? true,
-      youtube: JSON.parse(localStorage.getItem(statusKeys.youtube)) ?? true,
-      telegram: JSON.parse(localStorage.getItem(statusKeys.telegram)) ?? true,
-      website: JSON.parse(localStorage.getItem(statusKeys.website)) ?? true
-    };
-  }
-
-  // Сохранение настроек
-  function saveSettings(settings) {
-    localStorage.setItem(statusKeys.siteClosed, JSON.stringify(settings.siteClosed));
-    localStorage.setItem(statusKeys.showNotification, JSON.stringify(settings.showNotification));
-    localStorage.setItem(statusKeys.discord, JSON.stringify(settings.discord));
-    localStorage.setItem(statusKeys.roblox, JSON.stringify(settings.roblox));
-    localStorage.setItem(statusKeys.youtube, JSON.stringify(settings.youtube));
-    localStorage.setItem(statusKeys.telegram, JSON.stringify(settings.telegram));
-    localStorage.setItem(statusKeys.website, JSON.stringify(settings.website));
-  }
-
-  // Обновить видимость баннера "сайт закрыт"
-  function updateSiteClosedBanner(siteClosed, showNotification) {
-    if (siteClosed) {
-      siteClosedBanner.style.display = 'block';
-      if (showNotification && Notification.permission === "granted") {
-        new Notification("Внимание!", {
-          body: "Сайт закрыт на технические работы",
-          icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Warning_icon.svg/1024px-Warning_icon.svg.png"
-        });
-      }
-    } else {
-      siteClosedBanner.style.display = 'none';
-    }
-  }
-
-  // Отрисовать статусы онлайн/оффлайн
-  function renderStatuses(settings) {
-    statusesContainer.innerHTML = '';
-    Object.entries(serviceLabels).forEach(([key, label]) => {
-      const isOnline = settings[key];
-      const statusClass = isOnline ? 'online' : 'offline';
-      const icon = isOnline ? icons[key] : icons[key].replace('online-icon', 'offline-icon').replace(/currentColor/g, '#dc2626');
-      const statusItem = document.createElement('div');
-      statusItem.className = `status-item ${statusClass}`;
-      statusItem.innerHTML = `
-        ${icon}
-        <div>${label}: <strong>${isOnline ? 'Онлайн' : 'Оффлайн'}</strong></div>
-      `;
-      statusesContainer.appendChild(statusItem);
-    });
-  }
-
-  // Инициализация админки - заполнить поля из localStorage
-  function initAdminPanel(settings) {
-    siteClosedCheckbox.checked = settings.siteClosed;
-    showNotificationCheckbox.checked = settings.showNotification;
-
-    discordStatusCheckbox.checked = settings.discord;
-    robloxStatusCheckbox.checked = settings.roblox;
-    youtubeStatusCheckbox.checked = settings.youtube;
-    telegramStatusCheckbox.checked = settings.telegram;
-    websiteStatusCheckbox.checked = settings.website;
-  }
-
-  // Проверка пароля и открытие админки
-  adminButton.addEventListener('click', () => {
-    if (adminPanel.style.display === 'block') {
-      adminPanel.style.display = 'none';
-      adminPanel.setAttribute('aria-hidden', 'true');
-      errorMsg.style.display = 'none';
-      adminPasswordInput.value = '';
-    } else {
-      adminPanel.style.display = 'block';
-      adminPanel.setAttribute('aria-hidden', 'false');
-      adminPasswordInput.focus();
-    }
-  });
-
-  // Проверка пароля при вводе (Enter)
-  adminPasswordInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      if (adminPasswordInput.value === ADMIN_PASSWORD) {
-        errorMsg.style.display = 'none';
-        adminPasswordInput.disabled = true;
-        adminPasswordInput.style.display = 'none';
-        loadCurrentSettings();
+  // Открытие панели после правильного пароля
+  adminPasswordInput.addEventListener('keydown', e => {
+    if(e.key === 'Enter') {
+      if(adminPasswordInput.value === ADMIN_PASSWORD) {
+        passwordOverlay.style.display = 'none';
+        adminPanel.style.display = 'block';
+        passwordError.style.display = 'none';
+        adminPasswordInput.value = '';
       } else {
-        errorMsg.style.display = 'block';
+        passwordError.style.display = 'block';
       }
     }
   });
 
-  // Загружаем настройки и инициализируем поля
-  function loadCurrentSettings() {
-    const settings = loadSettings();
-    initAdminPanel(settings);
-  }
+  // Кнопка ⚙️ открывает/закрывает панель (только если пароль уже введён)
+  adminButton.addEventListener('click', () => {
+    if(passwordOverlay.style.display !== 'none') {
+      adminPasswordInput.focus();
+    } else {
+      if(adminPanel.style.display === 'block') {
+        adminPanel.style.display = 'none';
+      } else {
+        adminPanel.style.display = 'block';
+      }
+    }
+  });
 
-  // Вкладки админки
-  tabButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      tabButtons.forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-selected', 'false');
-        b.tabIndex = -1;
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
-      btn.tabIndex = 0;
+  // Логика переключения вкладок
+  document.querySelectorAll('.service').forEach(service => {
+    const tabs = service.querySelectorAll('.tab-btn');
+    const contents = service.querySelectorAll('.tab-content');
 
-      const target = btn.dataset.tab;
-      tabContents.forEach(content => {
-        if (content.id === target) {
-          content.hidden = false;
-        } else {
-          content.hidden = true;
-        }
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Деактивируем все вкладки
+        tabs.forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        // Скрываем все контенты
+        contents.forEach(c => c.hidden = true);
+
+        // Активируем выбранную вкладку
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        const tabId = tab.getAttribute('data-tab');
+        service.querySelector(`#${tabId}`).hidden = false;
       });
     });
-  });
-
-  // Сохранить настройки
-  saveSettingsButton.addEventListener('click', () => {
-    if (adminPasswordInput.disabled === false) {
-      errorMsg.style.display = 'block';
-      errorMsg.textContent = 'Введите правильный пароль!';
-      return;
-    }
-    const newSettings = {
-      siteClosed: siteClosedCheckbox.checked,
-      showNotification: showNotificationCheckbox.checked,
-      discord: discordStatusCheckbox.checked,
-      roblox: robloxStatusCheckbox.checked,
-      youtube: youtubeStatusCheckbox.checked,
-      telegram: telegramStatusCheckbox.checked,
-      website: websiteStatusCheckbox.checked
-    };
-    saveSettings(newSettings);
-    renderStatuses(newSettings);
-    updateSiteClosedBanner(newSettings.siteClosed, newSettings.showNotification);
-    alert('Настройки сохранены!');
-  });
-
-  // Сброс настроек (удаляем localStorage)
-  resetSettingsButton.addEventListener('click', () => {
-    if (confirm('Вы уверены, что хотите сбросить все настройки к значениям по умолчанию?')) {
-      localStorage.clear();
-      location.reload();
-    }
-  });
-
-  // Запрос разрешения на уведомления при загрузке
-  if ("Notification" in window && Notification.permission !== "granted") {
-    Notification.requestPermission();
-  }
-
-  // Инициализация при загрузке страницы
-  window.addEventListener('DOMContentLoaded', () => {
-    const settings = loadSettings();
-    renderStatuses(settings);
-    updateSiteClosedBanner(settings.siteClosed, settings.showNotification);
   });
 </script>
 
