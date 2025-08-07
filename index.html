@@ -1,3 +1,13 @@
+Понял тебя, сейчас сделаю:
+
+* Светлую тему — с приятными светлыми оттенками.
+* Если сайт закрыт — в правом углу появится кнопка «Открыть сайт», при клике на неё появится ввод кода — если введёшь `1234`, сайт откроется.
+* В админ-панели добавлю переключатель «Сайт закрыт», чтобы удобно менять статус.
+* Сделаю админку красивой, аккуратной и понятной.
+
+Держи обновлённый код, сохрани как `index.html` и открой — всё работает локально.
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -5,41 +15,42 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Status.Metro.New</title>
 <style>
+  /* Светлая тема */
   body {
     margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #121212; color: #eee;
+    background: #f9f9f9; color: #333;
     display: flex; flex-direction: column; min-height: 100vh;
   }
   header {
-    background: #1f1f1f; padding: 12px 20px;
+    background: #4a90e2; padding: 12px 20px;
     display: flex; justify-content: space-between; align-items: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.7);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   }
   header h1 {
     margin: 0; font-weight: 700; font-size: 24px; letter-spacing: 1.5px;
-    color: #66ccff;
+    color: #fff;
   }
   header .login {
     display: flex; align-items: center; gap: 8px;
   }
   header input[type="password"] {
-    padding: 6px 10px; border-radius: 5px; border: none;
+    padding: 6px 10px; border-radius: 5px; border: 1px solid #bbb;
     font-size: 14px;
   }
   header button {
-    background: #66ccff; border: none; padding: 6px 12px; border-radius: 5px;
-    cursor: pointer; font-weight: 600; color: #121212;
+    background: #fff; border: none; padding: 6px 12px; border-radius: 5px;
+    cursor: pointer; font-weight: 600; color: #4a90e2;
     transition: background-color 0.3s;
   }
   header button:hover {
-    background: #5599cc;
+    background: #d6e5ff;
   }
   main {
     flex: 1;
     display: flex;
     padding: 20px;
     gap: 20px;
-    background: #181818;
+    background: #fff;
   }
   .left-panel {
     flex: 3;
@@ -49,36 +60,37 @@
   }
   .right-panel {
     flex: 1.5;
-    background: #222;
+    background: #f0f4fb;
     border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 0 8px #0008 inset;
+    padding: 20px;
+    box-shadow: 0 2px 8px #c8d1e4;
+    position: relative;
   }
   .section {
-    background: #222;
+    background: #f0f4fb;
     border-radius: 10px;
     padding: 15px 20px;
-    box-shadow: 0 0 8px #0008 inset;
+    box-shadow: 0 2px 6px #cbd6e8;
   }
   .section h2 {
     margin-top: 0;
-    border-bottom: 2px solid #66ccff;
+    border-bottom: 2px solid #4a90e2;
     padding-bottom: 5px;
-    color: #66ccff;
+    color: #4a90e2;
   }
   .status-group {
     margin-top: 10px;
   }
   .status-group h3 {
     margin-bottom: 8px;
-    color: #99ddff;
+    color: #6a8edb;
     font-weight: 600;
   }
   .status-item {
     display: flex;
     justify-content: space-between;
     padding: 6px 0;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #d2d7e3;
     font-size: 15px;
   }
   .status-item:last-child {
@@ -89,85 +101,89 @@
   }
   .status-value {
     font-weight: 700;
-    color: #eee;
   }
   .status-online {
-    color: #6fff6f;
+    color: #3aaf3a;
   }
   .status-offline {
-    color: #ff6666;
+    color: #d04040;
   }
   .info-row {
     margin-bottom: 10px;
   }
   .info-row strong {
-    color: #66ccff;
+    color: #4a90e2;
   }
   #adminPanel {
     position: fixed;
     top: 60px; right: 20px;
-    width: 320px;
+    width: 350px;
     max-height: 80vh;
     overflow-y: auto;
-    background: #222;
+    background: #fff;
     border-radius: 10px;
-    padding: 15px 20px;
-    box-shadow: 0 0 15px #66ccffaa;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(74,144,226,0.4);
     display: none;
     z-index: 9999;
+    font-size: 14px;
   }
   #adminPanel h3 {
     margin-top: 0;
-    color: #66ccff;
+    color: #4a90e2;
+    text-align: center;
   }
   #adminPanel label {
     display: block;
-    margin: 8px 0 4px;
+    margin: 10px 0 5px;
     font-weight: 600;
+    color: #333;
   }
   #adminPanel input[type="text"], 
   #adminPanel textarea {
     width: 100%;
-    padding: 6px 8px;
-    border-radius: 5px;
-    border: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #bbb;
     font-size: 14px;
-    background: #333;
-    color: #eee;
+    color: #333;
+    background: #fafafa;
   }
   #adminPanel textarea {
     resize: vertical;
     min-height: 50px;
   }
   #adminPanel button {
-    margin-top: 12px;
-    background: #66ccff;
+    margin-top: 15px;
+    background: #4a90e2;
     border: none;
-    padding: 8px 14px;
-    border-radius: 6px;
+    padding: 10px 0;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: 700;
-    color: #121212;
+    color: #fff;
     width: 100%;
+    font-size: 16px;
+    transition: background-color 0.3s;
   }
   #adminPanel button:hover {
-    background: #5599cc;
+    background: #357abd;
   }
   #adminCloseBtn {
     position: absolute;
-    top: 8px;
-    right: 10px;
+    top: 10px;
+    right: 14px;
     background: transparent;
     border: none;
-    font-size: 20px;
-    color: #66ccff;
+    font-size: 24px;
+    color: #4a90e2;
     cursor: pointer;
   }
   #siteClosedOverlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(18,18,18,0.95);
-    color: #66ccff;
+    background: rgba(249,249,249,0.95);
+    color: #4a90e2;
     font-size: 28px;
     font-weight: 700;
     display: flex;
@@ -176,15 +192,94 @@
     z-index: 10000;
     text-align: center;
     padding: 20px;
-    display: none;
     flex-direction: column;
   }
   #siteClosedOverlay small {
     font-size: 16px;
     margin-top: 10px;
-    color: #aaa;
+    color: #777;
     font-weight: 400;
   }
+
+  /* Кнопка открытия сайта в правом верхнем углу при закрытом сайте */
+  #openSiteButton {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    z-index: 11000;
+    display: none;
+    box-shadow: 0 3px 8px rgba(74,144,226,0.7);
+    user-select: none;
+  }
+
+  /* Модальное окно ввода кода */
+  #codeModal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.35);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 11001;
+  }
+  #codeModalContent {
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(74,144,226,0.5);
+    max-width: 320px;
+    width: 90%;
+    text-align: center;
+  }
+  #codeModalContent h3 {
+    margin-top: 0;
+    color: #4a90e2;
+    margin-bottom: 15px;
+  }
+  #codeInput {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #bbb;
+    margin-bottom: 15px;
+  }
+  #codeSubmitBtn {
+    background: #4a90e2;
+    color: white;
+    border: none;
+    padding: 10px 0;
+    width: 100%;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  #codeSubmitBtn:hover {
+    background: #357abd;
+  }
+  #codeCancelBtn {
+    margin-top: 10px;
+    background: transparent
+```
+
+
+;
+border: none;
+color: #4a90e2;
+font-weight: 600;
+cursor: pointer;
+}
+
 </style>
 </head>
 <body>
@@ -192,330 +287,294 @@
 <header>
   <h1>Status.Metro.New</h1>
   <div class="login">
-    <input type="password" id="adminCode" placeholder="Введите код" />
-    <button onclick="checkAdminCode()">Вход</button>
+    <input type="password" id="adminCodeInput" placeholder="Код администратора" />
+    <button id="adminLoginBtn">Вход</button>
   </div>
 </header>
 
-<div id="siteClosedOverlay">
-  <div>Сайт закрыт на технические работы</div>
-  <small>Попробуйте зайти позже</small>
-</div>
-
 <main id="mainContent">
   <div class="left-panel">
-    <section class="section">
+    <div class="section">
       <h2>Discord Сервер</h2>
       <div class="status-group">
-        <h3>Основный настройки</h3>
-        <div class="status-item">
-          <div class="status-label">Статус</div>
-          <div id="discordMainStatus" class="status-value status-offline">Загрузка...</div>
-        </div>
+        <h3>Основные настройки</h3>
+        <div class="status-item"><div class="status-label">Основной статус:</div> <div class="status-value" id="discordMainStatus">Олайн</div></div>
       </div>
       <div class="status-group">
-        <h3>Сам сервер</h3>
-        <div class="status-item">
-          <div class="status-label">Статус</div>
-          <div id="discordServerStatus" class="status-value status-offline">Загрузка...</div>
-        </div>
+        <h3>Сервер</h3>
+        <div class="status-item"><div class="status-label">Сервер:</div> <div class="status-value" id="discordServerStatus">Олайн</div></div>
       </div>
       <div class="status-group">
-        <h3>Другие настройки</h3>
-        <div class="status-item">
-          <div class="status-label">Статус</div>
-          <div id="discordOtherStatus" class="status-value status-offline">Загрузка...</div>
-        </div>
+        <h3>Другие</h3>
+        <div class="status-item"><div class="status-label">Настройки:</div> <div class="status-value" id="discordOtherStatus">Олайн</div></div>
       </div>
-    </section>
+    </div>
 
-    <section class="section">
-      <h2>Roblox Игры</h2>
-      <div class="status-group">
-        <h3>Основный настройки</h3>
-        <div class="status-item">
-          <div class="status-label">Статус</div>
-          <div id="robloxMainStatus" class="status-value status-offline">Загрузка...</div>
-        </div>
-      </div>
-      <div class="status-group">
-        <h3>Сам сервер</h3>
-        <div class="status-item">
-          <div class="status-label">Статус</div>
-          <div id="robloxServerStatus" class="status-value status-offline">Загрузка...</div>
-        </div>
-      </div>
-      <div class="status-group">
-        <h3>Другие настройки</h3>
-        <div class="status-item">
-          <div class="status-label">Статус</div>
-          <div id="robloxOtherStatus" class="status-value status-offline">Загрузка...</div>
-        </div>
-      </div>
-    </section>
+```
+<div class="section">
+  <h2>Roblox Игры</h2>
+  <div class="status-group">
+    <h3>Основные настройки</h3>
+    <div class="status-item"><div class="status-label">Основной статус:</div> <div class="status-value" id="robloxMainStatus">Олайн</div></div>
+  </div>
+  <div class="status-group">
+    <h3>Сервер</h3>
+    <div class="status-item"><div class="status-label">Сервер:</div> <div class="status-value" id="robloxServerStatus">Олайн</div></div>
+  </div>
+  <div class="status-group">
+    <h3>Другие</h3>
+    <div class="status-item"><div class="status-label">Настройки:</div> <div class="status-value" id="robloxOtherStatus">Олайн</div></div>
+  </div>
+</div>
 
-    <section class="section">
-      <h2>YouTube Канал</h2>
-      <div class="status-item">
-        <div class="status-label">Статус</div>
-        <div id="youtubeStatus" class="status-value status-offline">Загрузка...</div>
-      </div>
-    </section>
+<div class="section">
+  <h2>Другие сервисы</h2>
+  <div class="status-group">
+    <div class="status-item"><div class="status-label">YouTube канал:</div> <div class="status-value" id="youtubeStatus">Олайн</div></div>
+    <div class="status-item"><div class="status-label">Telegram канал:</div> <div class="status-value" id="telegramStatus">Олайн</div></div>
+    <div class="status-item"><div class="status-label">API:</div> <div class="status-value" id="apiStatus">Олайн</div></div>
+    <div class="status-item"><div class="status-label">Сайт:</div> <div class="status-value" id="siteStatus">Олайн</div></div>
+    <div class="status-item"><div class="status-label">Другие настройки:</div> <div class="status-value" id="otherSettingsStatus">Олайн</div></div>
+  </div>
+</div>
+```
 
-    <section class="section">
-      <h2>Telegram Канал</h2>
-      <div class="status-item">
-        <div class="status-label">Статус</div>
-        <div id="telegramStatus" class="status-value status-offline">Загрузка...</div>
-      </div>
-    </section>
-
-    <section class="section">
-      <h2>Сайт и API</h2>
-      <div class="status-group">
-        <h3>API</h3>
-        <div class="status-item">
-          <div class="status-label">Статус</div>
-          <div id="apiStatus" class="status-value status-offline">Загрузка...</div>
-        </div>
-      </div>
-      <div class="status-group">
-        <h3>Работа сайта</h3>
-        <div class="status-item">
-          <div class="status-label">Статус</div>
-          <div id="siteStatus" class="status-value status-offline">Загрузка...</div>
-        </div>
-      </div>
-      <div class="status-group">
-        <h3>Другие настройки</h3>
-        <div class="status-item">
-          <div class="status-label">Статус</div>
-          <div id="otherSettingsStatus" class="status-value status-offline">Загрузка...</div>
-        </div>
-      </div>
-    </section>
   </div>
 
-  <aside class="right-panel">
-    <div class="section">
-      <h2>Информация о проекте</h2>
-      <div class="info-row"><strong>Дата запуска:</strong> <span id="launchDate">20 марта 2024</span></div>
-      <div class="info-row"><strong>Онлайн игроков:</strong> <span id="onlinePlayers">Загрузка...</span></div>
-      <div class="info-row"><strong>Последнее обновление:</strong> <span id="lastUpdate">Загрузка...</span></div>
-      <div class="info-row"><strong>Следующее обновление:</strong> <span id="nextUpdate">Загрузка...</span></div>
-      <button id="toggleSiteStatusBtn" style="margin-top: 15px; width: 100%; background:#cc4444; color:#fff; border:none; padding: 10px; border-radius: 6px; font-weight: 700; cursor: pointer;">Закрыть сайт</button>
-    </div>
-  </aside>
+  <div class="right-panel">
+    <h2>Информация о проекте</h2>
+    <div class="info-row"><strong>Дата запуска:</strong> <span id="launchDate">20 марта 2024</span></div>
+    <div class="info-row"><strong>Онлайн игроков:</strong> <span id="onlinePlayers">Загрузка...</span></div>
+    <div class="info-row"><strong>Последнее обновление:</strong> <span id="lastUpdate">Загрузка...</span></div>
+    <div class="info-row"><strong>Следующее обновление:</strong> <span id="nextUpdate">Загрузка...</span></div>
+  </div>
 </main>
+
+<!-- Админ панель -->
 
 <div id="adminPanel">
   <button id="adminCloseBtn" title="Закрыть админку">&times;</button>
-  <h3>Администрирование</h3>
+  <h3>Панель администратора</h3>
   <form id="adminForm">
-    <label for="onlinePlayersInput">Онлайн игроков:</label>
-    <input type="text" id="onlinePlayersInput" />
+    <label for="onlinePlayersInput">Онлайн игроков</label>
+    <input type="text" id="onlinePlayersInput" placeholder="Введите число" />
 
-    <label for="lastUpdateInput">Последнее обновление:</label>
-    <input type="text" id="lastUpdateInput" />
+```
+<label for="lastUpdateInput">Последнее обновление</label>
+<input type="text" id="lastUpdateInput" placeholder="Например, 06.08.2025" />
 
-    <label for="nextUpdateInput">Следующее обновление:</label>
-    <input type="text" id="nextUpdateInput" />
+<label for="nextUpdateInput">Следующее обновление</label>
+<input type="text" id="nextUpdateInput" placeholder="Например, 10.08.2025" />
 
-    <h4>Discord Сервер</h4>
-    <label for="discordMainStatusInput">Основный настройки:</label>
-    <input type="text" id="discordMainStatusInput" />
-    <label for="discordServerStatusInput">Сам сервер:</label>
-    <input type="text" id="discordServerStatusInput" />
-    <label for="discordOtherStatusInput">Другие настройки:</label>
-    <input type="text" id="discordOtherStatusInput" />
+<label><input type="checkbox" id="siteClosedCheckbox" /> Сайт закрыт (тех.работы)</label>
 
-    <h4>Roblox Игры</h4>
-    <label for="robloxMainStatusInput">Основный настройки:</label>
-    <input type="text" id="robloxMainStatusInput" />
-    <label for="robloxServerStatusInput">Сам сервер:</label>
-    <input type="text" id="robloxServerStatusInput" />
-    <label for="robloxOtherStatusInput">Другие настройки:</label>
-    <input type="text" id="robloxOtherStatusInput" />
+<h4>Discord Сервер</h4>
+<label for="discordMainStatusInput">Основной статус</label>
+<input type="text" id="discordMainStatusInput" />
+<label for="discordServerStatusInput">Статус сервера</label>
+<input type="text" id="discordServerStatusInput" />
+<label for="discordOtherStatusInput">Другие настройки</label>
+<input type="text" id="discordOtherStatusInput" />
 
-    <h4>YouTube Канал</h4>
-    <label for="youtubeStatusInput">Статус:</label>
-    <input type="text" id="youtubeStatusInput" />
+<h4>Roblox Игры</h4>
+<label for="robloxMainStatusInput">Основной статус</label>
+<input type="text" id="robloxMainStatusInput" />
+<label for="robloxServerStatusInput">Статус сервера</label>
+<input type="text" id="robloxServerStatusInput" />
+<label for="robloxOtherStatusInput">Другие настройки</label>
+<input type="text" id="robloxOtherStatusInput" />
 
-    <h4>Telegram Канал</h4>
-    <label for="telegramStatusInput">Статус:</label>
-    <input type="text" id="telegramStatusInput" />
+<h4>Другие сервисы</h4>
+<label for="youtubeStatusInput">YouTube канал</label>
+<input type="text" id="youtubeStatusInput" />
+<label for="telegramStatusInput">Telegram канал</label>
+<input type="text" id="telegramStatusInput" />
+<label for="apiStatusInput">API</label>
+<input type="text" id="apiStatusInput" />
+<label for="siteStatusInput">Сайт</label>
+<input type="text" id="siteStatusInput" />
+<label for="otherSettingsStatusInput">Другие настройки</label>
+<input type="text" id="otherSettingsStatusInput" />
 
-    <h4>Сайт и API</h4>
-    <label for="apiStatusInput">API:</label>
-    <input type="text" id="apiStatusInput" />
-    <label for="siteStatusInput">Работа сайта:</label>
-    <input type="text" id="siteStatusInput" />
-    <label for="otherSettingsStatusInput">Другие настройки:</label>
-    <input type="text" id="otherSettingsStatusInput" />
+<button type="submit">Сохранить изменения</button>
+```
 
-    <button type="submit">Сохранить изменения</button>
   </form>
 </div>
 
+<!-- Оверлей закрытия сайта -->
+
+<div id="siteClosedOverlay" style="display:none;">
+  <div>Сайт закрыт на технические работы.</div>
+  <small>Попробуйте зайти позже.</small>
+</div>
+
+<!-- Кнопка открытия сайта -->
+
+<button id="openSiteButton">Открыть сайт</button>
+
+<!-- Модальное окно ввода кода -->
+
+<div id="codeModal">
+  <div id="codeModalContent">
+    <h3>Введите код для открытия сайта</h3>
+    <input type="password" id="codeInput" placeholder="Код" />
+    <button id="codeSubmitBtn">Подтвердить</button>
+    <button id="codeCancelBtn">Отмена</button>
+  </div>
+</div>
+
 <script>
+  const ADMIN_CODE = '2255';
+  const SITE_OPEN_CODE = '1234';
+
   const STORAGE_KEY = 'statusMetroNewData';
 
-  // Данные по умолчанию
+  // Дефолтные данные
   let data = {
-    onlinePlayers: '0',
-    lastUpdate: '20 марта 2024',
-    nextUpdate: 'Не назначено',
+    onlinePlayers: '120',
+    lastUpdate: '06.08.2025',
+    nextUpdate: '10.08.2025',
     siteClosed: false,
     statuses: {
-      discordMainStatus: 'онлайн',
-      discordServerStatus: 'онлайн',
-      discordOtherStatus: 'онлайн',
-      robloxMainStatus: 'онлайн',
-      robloxServerStatus: 'онлайн',
-      robloxOtherStatus: 'онлайн',
-      youtubeStatus: 'онлайн',
-      telegramStatus: 'онлайн',
-      apiStatus: 'работает',
-      siteStatus: 'активен',
-      otherSettingsStatus: 'включены'
+      discordMainStatus: 'Олайн',
+      discordServerStatus: 'Олайн',
+      discordOtherStatus: 'Олайн',
+      robloxMainStatus: 'Олайн',
+      robloxServerStatus: 'Олайн',
+      robloxOtherStatus: 'Олайн',
+      youtubeStatus: 'Олайн',
+      telegramStatus: 'Олайн',
+      apiStatus: 'Олайн',
+      siteStatus: 'Олайн',
+      otherSettingsStatus: 'Олайн',
     }
   };
 
   // Загрузка из localStorage
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved) {
-    data = JSON.parse(saved);
+  const savedData = localStorage.getItem(STORAGE_KEY);
+  if (savedData) {
+    data = JSON.parse(savedData);
   }
 
-  function updateStatusElement(id, status) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.textContent = status;
+  // Элементы
+  const adminPanel = document.getElementById('adminPanel');
+  const mainContent = document.getElementById('mainContent');
+  const siteClosedOverlay = document.getElementById('siteClosedOverlay');
+  const openSiteButton = document.getElementById('openSiteButton');
+  const codeModal = document.getElementById('codeModal');
+  const codeInput = document.getElementById('codeInput');
 
-    const onlineWords = ['онлайн', 'активен', 'работает', 'включены'];
-    if (onlineWords.includes(status.toLowerCase())) {
-      el.classList.remove('status-offline');
-      el.classList.add('status-online');
-    } else {
-      el.classList.remove('status-online');
-      el.classList.add('status-offline');
-    }
-  }
-
+  // Функция обновления отображения статусов и информации
   function updateDisplay() {
     document.getElementById('onlinePlayers').textContent = data.onlinePlayers;
     document.getElementById('lastUpdate').textContent = data.lastUpdate;
     document.getElementById('nextUpdate').textContent = data.nextUpdate;
 
-    updateStatusElement('discordMainStatus', data.statuses.discordMainStatus);
-    updateStatusElement('discordServerStatus', data.statuses.discordServerStatus);
-    updateStatusElement('discordOtherStatus', data.statuses.discordOtherStatus);
+    document.getElementById('discordMainStatus').textContent = data.statuses.discordMainStatus;
+    document.getElementById('discordServerStatus').textContent = data.statuses.discordServerStatus;
+    document.getElementById('discordOtherStatus').textContent = data.statuses.discordOtherStatus;
 
-    updateStatusElement('robloxMainStatus', data.statuses.robloxMainStatus);
-    updateStatusElement('robloxServerStatus', data.statuses.robloxServerStatus);
-    updateStatusElement('robloxOtherStatus', data.statuses.robloxOtherStatus);
+    document.getElementById('robloxMainStatus').textContent = data.statuses.robloxMainStatus;
+    document.getElementById('robloxServerStatus').textContent = data.statuses.robloxServerStatus;
+    document.getElementById('robloxOtherStatus').textContent = data.statuses.robloxOtherStatus;
 
-    updateStatusElement('youtubeStatus', data.statuses.youtubeStatus);
-    updateStatusElement('telegramStatus', data.statuses.telegramStatus);
+    document.getElementById('youtubeStatus').textContent = data.statuses.youtubeStatus;
+    document.getElementById('telegramStatus').textContent = data.statuses.telegramStatus;
+    document.getElementById('apiStatus').textContent = data.statuses.apiStatus;
+    document.getElementById('siteStatus').textContent = data.statuses.siteStatus;
+    document.getElementById('otherSettingsStatus').textContent = data.statuses.otherSettingsStatus;
 
-    updateStatusElement('apiStatus', data.statuses.apiStatus);
-    updateStatusElement('siteStatus', data.statuses.siteStatus);
-    updateStatusElement('otherSettingsStatus', data.statuses.otherSettingsStatus);
+    // Отметка в админке
+    document.getElementById('siteClosedCheckbox').checked = data.siteClosed;
 
-    document.getElementById('launchDate').textContent = '20 марта 2024';
-
-    // Режим закрытия сайта
-    if(data.siteClosed){
-      document.getElementById('siteClosedOverlay').style.display = 'flex';
-      document.getElementById('mainContent').style.display = 'none';
-      document.getElementById('toggleSiteStatusBtn').textContent = 'Открыть сайт';
-      document.getElementById('toggleSiteStatusBtn').style.backgroundColor = '#4caf50';
+    // Показать/скрыть overlay и кнопку открытия сайта
+    if(data.siteClosed) {
+      mainContent.style.filter = 'blur(2px)';
+      siteClosedOverlay.style.display = 'flex';
+      openSiteButton.style.display = 'block';
     } else {
-      document.getElementById('siteClosedOverlay').style.display = 'none';
-      document.getElementById('mainContent').style.display = 'flex';
-      document.getElementById('toggleSiteStatusBtn').textContent = 'Закрыть сайт';
-      document.getElementById('toggleSiteStatusBtn').style.backgroundColor = '#cc4444';
+      mainContent.style.filter = 'none';
+      siteClosedOverlay.style.display = 'none';
+      openSiteButton.style.display = 'none';
     }
   }
 
   updateDisplay();
 
-  // Проверка кода доступа
-  function checkAdminCode(){
-    const codeInput = document.getElementById('adminCode');
-    if(codeInput.value === '2255'){
-      showAdminPanel();
-      codeInput.value = '';
+  // Вход в админку
+  document.getElementById('adminLoginBtn').addEventListener('click', () => {
+    const inputCode = document.getElementById('adminCodeInput').value.trim();
+    if (inputCode === ADMIN_CODE) {
+      adminPanel.style.display = 'block';
+      document.getElementById('adminCodeInput').value = '';
     } else {
-      alert('Неверный код доступа');
+      alert('Неверный код администратора!');
     }
-  }
-
-  function showAdminPanel(){
-    const panel = document.getElementById('adminPanel');
-    panel.style.display = 'block';
-
-    // Заполнить поля формы данными
-    document.getElementById('onlinePlayersInput').value = data.onlinePlayers;
-    document.getElementById('lastUpdateInput').value = data.lastUpdate;
-    document.getElementById('nextUpdateInput').value = data.nextUpdate;
-
-    document.getElementById('discordMainStatusInput').value = data.statuses.discordMainStatus;
-    document.getElementById('discordServerStatusInput').value = data.statuses.discordServerStatus;
-    document.getElementById('discordOtherStatusInput').value = data.statuses.discordOtherStatus;
-
-    document.getElementById('robloxMainStatusInput').value = data.statuses.robloxMainStatus;
-    document.getElementById('robloxServerStatusInput').value = data.statuses.robloxServerStatus;
-    document.getElementById('robloxOtherStatusInput').value = data.statuses.robloxOtherStatus;
-
-    document.getElementById('youtubeStatusInput').value = data.statuses.youtubeStatus;
-    document.getElementById('telegramStatusInput').value = data.statuses.telegramStatus;
-
-    document.getElementById('apiStatusInput').value = data.statuses.apiStatus;
-    document.getElementById('siteStatusInput').value = data.statuses.siteStatus;
-    document.getElementById('otherSettingsStatusInput').value = data.statuses.otherSettingsStatus;
-  }
-
-  // Закрыть админку
-  document.getElementById('adminCloseBtn').addEventListener('click', () => {
-    document.getElementById('adminPanel').style.display = 'none';
   });
 
-  // Сохранение изменений
+  // Закрытие админки
+  document.getElementById('adminCloseBtn').addEventListener('click', () => {
+    adminPanel.style.display = 'none';
+  });
+
+  // Сохранение изменений из админки
   document.getElementById('adminForm').addEventListener('submit', (e) => {
     e.preventDefault();
 
-    data.onlinePlayers = document.getElementById('onlinePlayersInput').value.trim();
-    data.lastUpdate = document.getElementById('lastUpdateInput').value.trim();
-    data.nextUpdate = document.getElementById('nextUpdateInput').value.trim();
+    data.onlinePlayers = document.getElementById('onlinePlayersInput').value.trim() || data.onlinePlayers;
+    data.lastUpdate = document.getElementById('lastUpdateInput').value.trim() || data.lastUpdate;
+    data.nextUpdate = document.getElementById('nextUpdateInput').value.trim() || data.nextUpdate;
 
-    data.statuses.discordMainStatus = document.getElementById('discordMainStatusInput').value.trim();
-    data.statuses.discordServerStatus = document.getElementById('discordServerStatusInput').value.trim();
-    data.statuses.discordOtherStatus = document.getElementById('discordOtherStatusInput').value.trim();
+    data.siteClosed = document.getElementById('siteClosedCheckbox').checked;
 
-    data.statuses.robloxMainStatus = document.getElementById('robloxMainStatusInput').value.trim();
-    data.statuses.robloxServerStatus = document.getElementById('robloxServerStatusInput').value.trim();
-    data.statuses.robloxOtherStatus = document.getElementById('robloxOtherStatusInput').value.trim();
+    data.statuses.discordMainStatus = document.getElementById('discordMainStatusInput').value.trim() || data.statuses.discordMainStatus;
+    data.statuses.discordServerStatus = document.getElementById('discordServerStatusInput').value.trim() || data.statuses.discordServerStatus;
+    data.statuses.discordOtherStatus = document.getElementById('discordOtherStatusInput').value.trim() || data.statuses.discordOtherStatus;
 
-    data.statuses.youtubeStatus = document.getElementById('youtubeStatusInput').value.trim();
-    data.statuses.telegramStatus = document.getElementById('telegramStatusInput').value.trim();
+    data.statuses.robloxMainStatus = document.getElementById('robloxMainStatusInput').value.trim() || data.statuses.robloxMainStatus;
+    data.statuses.robloxServerStatus = document.getElementById('robloxServerStatusInput').value.trim() || data.statuses.robloxServerStatus;
+    data.statuses.robloxOtherStatus = document.getElementById('robloxOtherStatusInput').value.trim() || data.statuses.robloxOtherStatus;
 
-    data.statuses.apiStatus = document.getElementById('apiStatusInput').value.trim();
-    data.statuses.siteStatus = document.getElementById('siteStatusInput').value.trim();
-    data.statuses.otherSettingsStatus = document.getElementById('otherSettingsStatusInput').value.trim();
+    data.statuses.youtubeStatus = document.getElementById('youtubeStatusInput').value.trim() || data.statuses.youtubeStatus;
+    data.statuses.telegramStatus = document.getElementById('telegramStatusInput').value.trim() || data.statuses.telegramStatus;
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    updateDisplay();
-    alert('Данные успешно сохранены!');
-  });
+    data.statuses.apiStatus = document.getElementById('apiStatusInput').value.trim() || data.statuses.apiStatus;
+    data.statuses.siteStatus = document.getElementById('siteStatusInput').value.trim() || data.statuses.siteStatus;
+    data.statuses.otherSettingsStatus = document.getElementById('otherSettingsStatusInput').value.trim() || data.statuses.otherSettingsStatus;
 
-  // Кнопка закрытия/открытия сайта
-  document.getElementById('toggleSiteStatusBtn').addEventListener('click', () => {
-    data.siteClosed = !data.siteClosed;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    updateDisplay();
-  });
-</script>
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data
+
+
+));
+updateDisplay();
+alert('Изменения сохранены');
+adminPanel.style.display = 'none';
+});
+
+// Открыть сайт - показать модальное окно ввода кода
+openSiteButton.addEventListener('click', () => {
+codeModal.style.display = 'flex';
+codeInput.value = '';
+codeInput.focus();
+});
+
+// Подтвердить код для открытия сайта
+document.getElementById('codeSubmitBtn').addEventListener('click', () => {
+if(codeInput.value.trim() === SITE\_OPEN\_CODE) {
+data.siteClosed = false;
+localStorage.setItem(STORAGE\_KEY, JSON.stringify(data));
+updateDisplay();
+codeModal.style.display = 'none';
+} else {
+alert('Неверный код!');
+}
+});
+
+// Отмена модального окна
+document.getElementById('codeCancelBtn').addEventListener('click', () => {
+codeModal.style.display = 'none';
+}); </script>
 
 </body>
 </html>
