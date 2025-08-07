@@ -247,8 +247,11 @@
 </main>
 
 <script>
-  // Изначальные данные
-  let data = {
+  // Ключ для localStorage
+  const STORAGE_KEY = 'metroNewStatusData';
+
+  // Данные по умолчанию
+  const defaultData = {
     onlinePlayers: '120',
     lastUpdate: '5 августа 2025, 18:00',
     nextUpdate: '10 августа 2025, 12:00',
@@ -264,6 +267,9 @@
     }
   };
 
+  // Загружаем данные из localStorage или используем дефолт
+  let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultData;
+
   function updateDisplay() {
     document.getElementById('onlinePlayers').textContent = data.onlinePlayers;
     document.getElementById('lastUpdate').textContent = data.lastUpdate;
@@ -273,7 +279,6 @@
       const el = document.getElementById(key);
       if (!el) continue;
       el.textContent = data.statuses[key];
-      // меняем цвет для оффлайн
       if(data.statuses[key].toLowerCase().includes('🔴')) {
         el.classList.add('offline');
         el.classList.remove('status');
@@ -302,7 +307,7 @@
   function showAdminForm() {
     const infoPanel = document.getElementById('infoPanel');
 
-    if(document.getElementById('adminForm')) return; // если форма уже есть — не создаём
+    if(document.getElementById('adminForm')) return;
 
     const form = document.createElement('form');
     form.id = 'adminForm';
@@ -363,6 +368,8 @@
       data.statuses.telegramStatus = document.getElementById('telegramStatusInput').value.trim();
       data.statuses.mcServerStatus = document.getElementById('mcServerStatusInput').value.trim();
       data.statuses.cs2ServerStatus = document.getElementById('cs2ServerStatusInput').value.trim();
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 
       updateDisplay();
       alert('Данные успешно сохранены!');
