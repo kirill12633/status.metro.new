@@ -7,7 +7,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
-    /* Волна для иконок */
     .wave {
       animation: wave 3s linear infinite;
       display: inline-block;
@@ -17,14 +16,12 @@
       25% { transform: rotate(5deg); }
       75% { transform: rotate(-5deg); }
     }
-    /* Точки статуса */
     .status-dot {
       width: 12px; height: 12px; border-radius: 50%; margin-right: 6px;
     }
     .online { background-color: #22c55e; }
     .offline { background-color: #ef4444; }
     .maintenance { background-color: #facc15; }
-    /* Оверлей закрытия */
     #siteClosedOverlay {
       position: fixed; inset: 0; background: rgba(255,255,255,0.95);
       display: none; flex-direction: column; align-items: center; justify-content: center;
@@ -37,16 +34,6 @@
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-20px); }
     }
-    /* Модалка кода */
-    #codeModal {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-      display: none; align-items: center; justify-content: center; z-index: 100;
-    }
-    #codeModalContent {
-      background: white; padding: 1.5rem 2rem; border-radius: 0.5rem; max-width: 320px; width: 90%;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center;
-    }
-    /* Кнопка открытия сайта */
     #openSiteButton {
       position: fixed; top: 1rem; right: 1rem;
       display: none; background-color: #3b82f6; color: white;
@@ -55,7 +42,6 @@
       transition: background-color 0.3s; z-index: 60;
     }
     #openSiteButton:hover { background-color: #2563eb; }
-    /* Админ панель */
     #adminPanel {
       position: fixed; bottom: 0; left: 0; right: 0; max-height: 40vh;
       background: white; box-shadow: 0 -4px 10px rgba(0,0,0,0.1); overflow-y: auto;
@@ -77,19 +63,24 @@
     #adminPanel select:focus, #adminPanel input[type=password]:focus {
       border-color: #2563eb; box-shadow: 0 0 0 2px #bfdbfe;
     }
+    #saveSettingsBtn, #resetSettingsBtn {
+      margin-top: 1.5rem; width: 100%; font-weight: 700; padding: 0.7rem; border-radius: 0.5rem; border: none; cursor: pointer; transition: background-color 0.3s;
+    }
     #saveSettingsBtn {
-      margin-top: 1.5rem; width: 100%; background-color: #2563eb; color: white;
-      font-weight: 700; padding: 0.7rem; border-radius: 0.5rem; border: none;
-      cursor: pointer; transition: background-color 0.3s;
+      background-color: #2563eb; color: white;
     }
     #saveSettingsBtn:hover { background-color: #1d4ed8; }
+    #resetSettingsBtn {
+      background-color: #ef4444; color: white;
+      margin-top: 0.5rem;
+    }
+    #resetSettingsBtn:hover { background-color: #b91c1c; }
     #adminCloseBtn {
       position: absolute; top: 0.5rem; right: 1rem; font-size: 1.5rem;
       font-weight: 700; cursor: pointer; color: #9ca3af; background: transparent;
       border: none; transition: color 0.3s;
     }
     #adminCloseBtn:hover { color: #ef4444; }
-    /* Основной контент */
     #mainContent {
       max-width: 900px; margin: 3rem auto 5rem; padding: 1rem 2rem;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -114,22 +105,23 @@
       display: flex; align-items: center; gap: 0.4rem; font-weight: 700; font-size: 1rem;
     }
     .status-value i { font-size: 1.2rem; }
+    #lastUpdated {
+      margin-top: 1rem; font-size: 0.875rem; color: #6b7280; text-align: center;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Кнопка открытия сайта -->
   <button id="openSiteButton" title="Открыть сайт">Открыть сайт</button>
 
-  <!-- Оверлей закрытого сайта -->
-  <div id="siteClosedOverlay">
-    <i class="fas fa-tools icon wave"></i>
+  <div id="siteClosedOverlay" role="alert" aria-live="assertive">
+    <i class="fas fa-tools icon wave" aria-hidden="true"></i>
     <h1 class="text-4xl font-bold mb-4">Сайт временно закрыт на технические работы</h1>
     <p class="text-lg max-w-xl mx-auto">Извините за неудобства, скоро всё будет работать!</p>
   </div>
 
-  <!-- Основной контент -->
-  <main id="mainContent">
+  <main id="mainContent" aria-label="Основной контент сайта">
     <div class="section">
       <h2><i class="fas fa-server"></i> Discord Сервер</h2>
       <div class="status-item">
@@ -154,27 +146,11 @@
       </div>
       <div class="status-item">
         <div class="status-label">Сам сервер</div>
-        <div class="status-value"><span class="status-dot maintenance"></span> Технические работы</div>
+        <div class="status-value"><span class="status-dot online"></span> Онлайн</div>
       </div>
       <div class="status-item">
         <div class="status-label">Другие</div>
         <div class="status-value"><span class="status-dot offline"></span> Офлайн</div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2><i class="fab fa-youtube"></i> YouTube Канал</h2>
-      <div class="status-item">
-        <div class="status-label">Основные настройки</div>
-        <div class="status-value"><span class="status-dot online"></span> Активен</div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2><i class="fab fa-telegram"></i> Телеграм Канал</h2>
-      <div class="status-item">
-        <div class="status-label">Основные настройки</div>
-        <div class="status-value"><span class="status-dot online"></span> Активен</div>
       </div>
     </div>
 
@@ -185,27 +161,29 @@
         <div class="status-value" id="siteStatus"><span class="status-dot online"></span> Открыт</div>
       </div>
     </div>
+
+    <div id="lastUpdated" aria-live="polite"></div>
   </main>
 
   <!-- Админка -->
   <div id="adminPanel" aria-label="Административная панель">
-    <button id="adminCloseBtn" title="Закрыть админку">&times;</button>
+    <button id="adminCloseBtn" aria-label="Закрыть админку">&times;</button>
     <h3>Управление сайтом</h3>
 
     <label for="siteStatusSelect">Статус сайта</label>
-    <select id="siteStatusSelect" aria-describedby="siteStatusDesc">
+    <select id="siteStatusSelect" aria-describedby="siteStatusDesc" aria-required="true">
       <option value="open">Открыт</option>
       <option value="closed">Закрыт на тех. работы</option>
     </select>
 
     <label for="adminCodeInput">Введите код доступа</label>
-    <input id="adminCodeInput" type="password" placeholder="Код доступа" autocomplete="off" />
+    <input id="adminCodeInput" type="password" placeholder="Код доступа" autocomplete="off" aria-required="true" />
 
     <button id="saveSettingsBtn">Сохранить</button>
+    <button id="resetSettingsBtn" class="mt-3">Сбросить все настройки</button>
   </div>
 
   <script>
-    // Переменные
     const overlay = document.getElementById('siteClosedOverlay');
     const openSiteBtn = document.getElementById('openSiteButton');
     const adminPanel = document.getElementById('adminPanel');
@@ -213,12 +191,13 @@
     const siteStatusSelect = document.getElementById('siteStatusSelect');
     const siteStatusDisplay = document.getElementById('siteStatus');
     const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+    const resetSettingsBtn = document.getElementById('resetSettingsBtn');
     const adminCodeInput = document.getElementById('adminCodeInput');
+    const lastUpdatedDisplay = document.getElementById('lastUpdated');
 
-    // Код доступа (поменяй по своему)
     const ADMIN_CODE = '1234';
 
-    // Функция обновления отображения статуса сайта
+    // Обновление статуса сайта на странице
     function updateSiteStatusDisplay(status) {
       let dotClass = 'online';
       let text = 'Открыт';
@@ -229,9 +208,28 @@
       siteStatusDisplay.innerHTML = `<span class="status-dot ${dotClass}"></span> ${text}`;
     }
 
-    // Функция обновления интерфейса в зависимости от статуса
-    function updateUI() {
+    // Обновить дату последнего обновления
+    function updateLastUpdated(dateStr) {
+      if (!dateStr) {
+        lastUpdatedDisplay.textContent = 'Последнее обновление: не установлено';
+      } else {
+        lastUpdatedDisplay.textContent = `Последнее обновление: ${dateStr}`;
+      }
+    }
+
+    // Загрузить настройки из localStorage
+    function loadSettings() {
       const status = localStorage.getItem('siteStatus') || 'open';
+      const lastUpdate = localStorage.getItem('lastUpdate');
+      updateSiteStatusDisplay(status);
+      siteStatusSelect.value = status;
+      updateLastUpdated(lastUpdate);
+      return status;
+    }
+
+    // Обновить интерфейс в зависимости от статуса
+    function updateUI() {
+      const status = loadSettings();
 
       if (status === 'closed') {
         overlay.style.display = 'flex';
@@ -240,15 +238,14 @@
         overlay.style.display = 'none';
         openSiteBtn.style.display = 'none';
       }
-      updateSiteStatusDisplay(status);
-      siteStatusSelect.value = status;
     }
 
-    // Открыть админку по нажатию Ctrl+Shift+A
+    // Открыть админку при Ctrl+Shift+A
     document.addEventListener('keydown', e => {
       if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
         e.preventDefault();
         adminPanel.style.display = 'block';
+        adminCodeInput.value = '';
         adminCodeInput.focus();
       }
     });
@@ -259,13 +256,15 @@
       adminCodeInput.value = '';
     });
 
-    // Кнопка открытия сайта
+    // Кнопка открыть сайт (снимает закрытие)
     openSiteBtn.addEventListener('click', () => {
       localStorage.setItem('siteStatus', 'open');
+      localStorage.setItem('lastUpdate', new Date().toLocaleString());
       updateUI();
+      alert('Сайт открыт!');
     });
 
-    // Сохранить настройки
+    // Сохранить настройки из админки
     saveSettingsBtn.addEventListener('click', () => {
       const code = adminCodeInput.value.trim();
       if (code !== ADMIN_CODE) {
@@ -274,15 +273,22 @@
       }
       const status = siteStatusSelect.value;
       localStorage.setItem('siteStatus', status);
+      localStorage.setItem('lastUpdate', new Date().toLocaleString());
       updateUI();
       adminPanel.style.display = 'none';
       adminCodeInput.value = '';
       alert('Настройки сохранены!');
     });
 
-    // Инициализация интерфейса
+    // Сбросить все настройки (очистка localStorage)
+    resetSettingsBtn.addEventListener('click', () => {
+      if (!confirm('Вы действительно хотите сбросить все настройки и перезагрузить страницу?')) return;
+      localStorage.clear();
+      location.reload();
+    });
+
+    // Инициализация UI
     updateUI();
   </script>
-
 </body>
 </html>
