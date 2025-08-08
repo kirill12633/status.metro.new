@@ -2,232 +2,548 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Админка статусов проекта</title>
+  <title>Metro New — Статистика</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      max-width: 700px;
-      margin: 40px auto;
-      padding: 20px;
-      background: #f0f4f8;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 0;
       color: #222;
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #34495e;
-    }
-    .status-block {
-      background: white;
-      padding: 15px 20px;
-      border-radius: 8px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-    .status-block h2 {
-      margin-top: 0;
-      color: #2c3e50;
-      font-size: 1.2em;
-      margin-bottom: 10px;
-    }
-    .status-display {
-      font-weight: bold;
-      font-size: 1.1em;
-      margin-bottom: 10px;
-      padding: 10px;
-      border-radius: 6px;
-      background: #ecf0f1;
-      color: #2c3e50;
-      min-height: 40px;
+    header {
+      background: #1f2a38;
+      color: white;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 10px;
-    }
-    .status-ok {
-      color: #27ae60;
-    }
-    .status-error {
-      color: #c0392b;
-    }
-    form {
-      display: flex;
+      padding: 15px 30px;
       flex-wrap: wrap;
       gap: 10px;
+    }
+    header h1 {
+      font-weight: 700;
+      font-size: 22px;
+      margin: 0;
+    }
+    #announcement {
+      flex-grow: 1;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+      color: #ffc107;
+      user-select: none;
+    }
+    #login-form {
+      display: flex;
       align-items: center;
+      gap: 10px;
     }
-    input[type="text"], input[type="password"] {
-      flex: 1 1 250px;
-      padding: 10px;
-      font-size: 1em;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    button {
-      padding: 12px 20px;
-      background: #2980b9;
+    #login-form input[type="password"] {
+      padding: 8px 10px;
+      border-radius: 5px;
       border: none;
-      border-radius: 6px;
+      outline: none;
+      font-size: 14px;
+      width: 130px;
+    }
+    #login-form button {
+      padding: 8px 14px;
+      background: #2ecc71;
+      border: none;
+      border-radius: 5px;
       color: white;
-      font-size: 1em;
+      font-weight: 600;
       cursor: pointer;
       transition: background 0.3s;
-      flex-shrink: 0;
     }
-    button:hover {
-      background: #1c5980;
+    #login-form button:hover {
+      background: #27ae60;
     }
-    #message {
-      margin-top: 15px;
-      font-weight: bold;
+    main {
+      max-width: 960px;
+      margin: 20px auto;
+      padding: 0 20px 40px;
     }
-    #message.error {
+    #search {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+    .systems {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .system-card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      flex: 1 1 300px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      transition: box-shadow 0.3s ease;
+    }
+    .system-card:hover {
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+    .system-header {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #34495e;
+    }
+    .status {
+      display: inline-block;
+      padding: 8px 15px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 14px;
+      user-select: none;
+    }
+    .status.ok {
+      background: #eafaf1;
+      color: #27ae60;
+      border: 1.5px solid #27ae60;
+    }
+    .status.issue {
+      background: #fdecea;
+      color: #c0392b;
+      border: 1.5px solid #c0392b;
+    }
+    .status.maintenance {
+      background: #fff3e0;
+      color: #e67e22;
+      border: 1.5px solid #e67e22;
+    }
+    /* Админка */
+    #admin-panel {
+      display: none;
+      margin-top: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    #admin-panel h2 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #34495e;
+    }
+    .admin-system {
+      margin-bottom: 20px;
+    }
+    .admin-system label {
+      font-weight: 600;
+      margin-right: 10px;
+    }
+    select {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    #announcement-input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    #save-btn {
+      background: #3498db;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 18px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #save-btn:hover {
+      background: #2980b9;
+    }
+    #close-site-btn {
+      background: #c0392b;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 18px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+    #close-site-btn:hover {
+      background: #962d22;
+    }
+    #site-status {
+      margin-top: 10px;
+      font-weight: 700;
+      font-size: 15px;
       color: #c0392b;
     }
-    #message.success {
-      color: #27ae60;
+    /* История */
+    #history-section {
+      margin-top: 40px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
-    label {
+    #history-section h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #34495e;
+    }
+    #history-list {
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 14px;
+      color: #555;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+    #history-list div {
+      padding: 6px 0;
+      border-bottom: 1px solid #eee;
+    }
+    #export-history {
+      margin-top: 10px;
+      background: #27ae60;
+      border: none;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
       font-weight: 600;
-      width: 120px;
-      user-select: none;
+      transition: background 0.3s;
+    }
+    #export-history:hover {
+      background: #219150;
+    }
+    /* Мобилка */
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+      }
+      .systems {
+        flex-direction: column;
+      }
+      .system-card {
+        flex: 1 1 auto;
+      }
     }
   </style>
 </head>
 <body>
+  <header>
+    <h1>Metro New — Статистика</h1>
+    <div id="announcement">Все системы работают стабильно</div>
+    <form id="login-form">
+      <input type="password" placeholder="Пароль" id="admin-password" />
+      <button type="submit">Вход</button>
+    </form>
+  </header>
 
-<h1>Админка управления статусами проекта</h1>
+  <main>
+    <input type="search" id="search" placeholder="Поиск по системам..." />
 
-<div id="statuses">
-  <div class="status-block" data-key="server">
-    <h2>Статус сервера</h2>
-    <div class="status-display" id="status-server">Загрузка...</div>
-  </div>
-  <div class="status-block" data-key="game">
-    <h2>Статус игры</h2>
-    <div class="status-display" id="status-game">Загрузка...</div>
-  </div>
-  <div class="status-block" data-key="telegram">
-    <h2>Статус канала Telegram</h2>
-    <div class="status-display" id="status-telegram">Загрузка...</div>
-  </div>
-  <div class="status-block" data-key="website">
-    <h2>Статус сайта</h2>
-    <div class="status-display" id="status-website">Загрузка...</div>
-  </div>
-</div>
+    <section class="systems" id="systems-list">
+      <!-- Системы будут тут -->
+    </section>
 
-<form id="status-form">
-  <label for="status-select">Выберите статус для изменения:</label>
-  <select id="status-select" required style="flex:1 1 200px; padding:10px; border-radius:6px; border:1px solid #ccc;">
-    <option value="" disabled selected>-- Выберите систему --</option>
-    <option value="server">Сервер</option>
-    <option value="game">Игра</option>
-    <option value="telegram">Telegram канал</option>
-    <option value="website">Сайт</option>
-  </select>
+    <section id="admin-panel">
+      <h2>Админка — Управление статусами</h2>
+      <textarea id="announcement-input" rows="2" placeholder="Редактировать объявление"></textarea>
 
-  <input type="text" id="new-status" placeholder="Новый статус (например, Все работает)" required />
+      <div class="admin-system">
+        <label for="status-discord">Discord сервер:</label>
+        <select id="status-discord">
+          <option value="ok">Работает</option>
+          <option value="issue">Проблемы</option>
+          <option value="maintenance">Тех. работы</option>
+        </select>
+      </div>
 
-  <input type="password" id="password" placeholder="Пароль администратора" required style="flex:1 1 200px;" />
+      <div class="admin-system">
+        <label for="status-games">Игры:</label>
+        <select id="status-games">
+          <option value="ok">Работает</option>
+          <option value="issue">Проблемы</option>
+          <option value="maintenance">Тех. работы</option>
+        </select>
+      </div>
 
-  <button type="submit">Обновить статус</button>
-</form>
+      <div class="admin-system">
+        <label for="status-youtube">YouTube канал:</label>
+        <select id="status-youtube">
+          <option value="ok">Работает</option>
+          <option value="issue">Проблемы</option>
+          <option value="maintenance">Тех. работы</option>
+        </select>
+      </div>
 
-<div id="message"></div>
+      <div class="admin-system">
+        <label for="status-telegram">Telegram канал:</label>
+        <select id="status-telegram">
+          <option value="ok">Работает</option>
+          <option value="issue">Проблемы</option>
+          <option value="maintenance">Тех. работы</option>
+        </select>
+      </div>
+
+      <h3>Сайт</h3>
+      <div class="admin-system">
+        <label for="status-api">API:</label>
+        <select id="status-api">
+          <option value="ok">Работает</option>
+          <option value="issue">Проблемы</option>
+          <option value="maintenance">Тех. работы</option>
+        </select>
+      </div>
+
+      <div class="admin-system">
+        <label for="status-site-main">Сам сайт:</label>
+        <select id="status-site-main">
+          <option value="ok">Работает</option>
+          <option value="issue">Проблемы</option>
+          <option value="maintenance">Тех. работы</option>
+        </select>
+      </div>
+
+      <div class="admin-system">
+        <label for="status-other">Другие настройки:</label>
+        <select id="status-other">
+          <option value="ok">Работает</option>
+          <option value="issue">Проблемы</option>
+          <option value="maintenance">Тех. работы</option>
+        </select>
+      </div>
+
+      <button id="save-btn">Сохранить</button>
+      <button id="close-site-btn">Закрыть сайт</button>
+      <div id="site-status"></div>
+    </section>
+
+    <section id="history-section" style="display:none;">
+      <h3>История изменений</h3>
+      <div id="history-list"></div>
+      <button id="export-history">Экспортировать историю (CSV)</button>
+    </section>
+  </main>
 
 <script>
-  const webhookURL = 'https://discord.com/api/webhooks/1403274247232819271/Ui4g8IJEMhdfwurKFHag9LUwHh9lRzC7oGF5i29MaDamHioSgubRuFBvT8GyHi39eIKc';
-  const ADMIN_PASSWORD = '2255';
+  const PASSWORD = "2255";
 
-  // Изначальные статусы (можно менять)
-  let statuses = {
-    server: 'Все системы работают стабильно',
-    game: 'Все системы работают стабильно',
-    telegram: 'Все системы работают стабильно',
-    website: 'Все системы работают стабильно'
+  const systems = {
+    "discord": {name: "Discord сервер", status: "ok"},
+    "games": {name: "Игры", status: "ok"},
+    "youtube": {name: "YouTube канал", status: "ok"},
+    "telegram": {name: "Telegram канал", status: "ok"},
+    "api": {name: "API", status: "ok"},
+    "site-main": {name: "Сам сайт", status: "ok"},
+    "other": {name: "Другие настройки", status: "ok"},
   };
 
-  // Элементы показа статусов
-  function updateStatusDisplay(key) {
-    const el = document.getElementById('status-' + key);
-    if (!el) return;
+  let isAdmin = false;
+  let siteClosed = false;
+  let announcementText = "Все системы работают стабильно";
 
-    const status = statuses[key];
-    el.textContent = status;
+  const announcementDiv = document.getElementById("announcement");
+  const loginForm = document.getElementById("login-form");
+  const adminPanel = document.getElementById("admin-panel");
+  const systemsList = document.getElementById("systems-list");
+  const announcementInput = document.getElementById("announcement-input");
+  const saveBtn = document.getElementById("save-btn");
+  const closeSiteBtn = document.getElementById("close-site-btn");
+  const siteStatus = document.getElementById("site-status");
+  const searchInput = document.getElementById("search");
+  const historySection = document.getElementById("history-section");
+  const historyList = document.getElementById("history-list");
+  const exportHistoryBtn = document.getElementById("export-history");
 
-    // Подкрашиваем зеленым если содержит "работают", красным — если нет
-    if (/работа/i.test(status)) {
-      el.classList.add('status-ok');
-      el.classList.remove('status-error');
+  // Загрузка из localStorage
+  function loadData() {
+    const data = localStorage.getItem("metro-status-data");
+    if (!data) return;
+    const parsed = JSON.parse(data);
+    if (parsed.systems) {
+      for (const key in parsed.systems) {
+        if (systems[key]) systems[key].status = parsed.systems[key].status;
+      }
+    }
+    if (parsed.announcement) announcementText = parsed.announcement;
+    if (parsed.siteClosed !== undefined) siteClosed = parsed.siteClosed;
+    if (parsed.history) {
+      history = parsed.history;
     } else {
-      el.classList.add('status-error');
-      el.classList.remove('status-ok');
+      history = [];
     }
   }
 
-  // Обновляем все при загрузке
-  function updateAllStatuses() {
-    for (const key in statuses) {
-      updateStatusDisplay(key);
+  // Сохранение в localStorage
+  function saveData() {
+    const toSave = {
+      systems,
+      announcement: announcementText,
+      siteClosed,
+      history
+    };
+    localStorage.setItem("metro-status-data", JSON.stringify(toSave));
+  }
+
+  // История изменений
+  let history = [];
+
+  function addHistory(component, oldStatus, newStatus) {
+    const time = Date.now();
+    history.unshift({time, component, oldStatus, newStatus});
+    if (history.length > 100) history.pop();
+    saveData();
+  }
+
+  // Отрисовка статусов на странице
+  function renderSystems(filter = "") {
+    systemsList.innerHTML = "";
+    const filterLower = filter.toLowerCase();
+    for (const key in systems) {
+      const sys = systems[key];
+      if (!sys.name.toLowerCase().includes(filterLower)) continue;
+
+      const div = document.createElement("div");
+      div.className = "system-card";
+
+      const h3 = document.createElement("div");
+      h3.className = "system-header";
+      h3.textContent = sys.name;
+
+      const statusSpan = document.createElement("span");
+      statusSpan.className = "status " + sys.status;
+      statusSpan.textContent = sys.status === "ok" ? "Работает" :
+                             sys.status === "issue" ? "Проблемы" :
+                             "Тех. работы";
+
+      div.appendChild(h3);
+      div.appendChild(statusSpan);
+      systemsList.appendChild(div);
     }
   }
 
-  // Показываем сообщение
-  const message = document.getElementById('message');
-  function showMessage(text, type='') {
-    message.textContent = text;
-    message.className = type;
+  // Обновление объявления
+  function renderAnnouncement() {
+    announcementDiv.textContent = announcementText;
   }
 
-  // Отправляем в Discord через webhook
-  async function sendToDiscord(system, status) {
-    const content = `Обновлён статус **${system}**: ${status}`;
-    const res = await fetch(webhookURL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content }),
+  // Отрисовка истории
+  function renderHistory() {
+    historyList.innerHTML = "";
+    if (history.length === 0) {
+      historyList.textContent = "История пуста.";
+      return;
+    }
+    history.forEach(item => {
+      const d = new Date(item.time);
+      const el = document.createElement("div");
+      el.textContent = `[${d.toLocaleString()}] ${systems[item.component]?.name || item.component}: ${statusText(item.oldStatus)} → ${statusText(item.newStatus)}`;
+      historyList.appendChild(el);
     });
-    if (!res.ok) throw new Error('Ошибка при отправке в Discord');
   }
 
-  // Обработка формы
-  const form = document.getElementById('status-form');
-  form.addEventListener('submit', async (e) => {
+  function statusText(status) {
+    if (status === "ok") return "Работает";
+    if (status === "issue") return "Проблемы";
+    if (status === "maintenance") return "Тех. работы";
+    return status;
+  }
+
+  // Обновить админ панель значения
+  function updateAdminPanel() {
+    announcementInput.value = announcementText;
+    for (const key in systems) {
+      const sel = document.getElementById("status-" + key);
+      if (sel) sel.value = systems[key].status;
+    }
+    siteStatus.textContent = siteClosed ? "Сайт закрыт на тех. работы" : "Сайт открыт";
+    siteStatus.style.color = siteClosed ? "#c0392b" : "#27ae60";
+    closeSiteBtn.textContent = siteClosed ? "Открыть сайт" : "Закрыть сайт";
+  }
+
+  // Вход в админку
+  loginForm.addEventListener("submit", e => {
     e.preventDefault();
-    showMessage('');
-
-    const system = document.getElementById('status-select').value;
-    const newStatus = document.getElementById('new-status').value.trim();
-    const password = document.getElementById('password').value;
-
-    if (password !== ADMIN_PASSWORD) {
-      showMessage('Ошибка: неверный пароль', 'error');
-      return;
-    }
-    if (!system) {
-      showMessage('Ошибка: выберите систему для обновления', 'error');
-      return;
-    }
-    if (!newStatus) {
-      showMessage('Ошибка: статус не может быть пустым', 'error');
-      return;
-    }
-
-    try {
-      await sendToDiscord(system, newStatus);
-      statuses[system] = newStatus;
-      updateStatusDisplay(system);
-      showMessage('Статус успешно обновлён!', 'success');
-
-      form.reset();
-    } catch (err) {
-      console.error(err);
-      showMessage('Ошибка: не удалось отправить статус в Discord', 'error');
+    const pass = document.getElementById("admin-password").value;
+    if (pass === PASSWORD) {
+      isAdmin = true;
+      adminPanel.style.display = "block";
+      loginForm.style.display = "none";
+      updateAdminPanel();
+    } else {
+      alert("Неверный пароль");
     }
   });
 
-  updateAllStatuses();
-</script>
+  // Сохранение изменений админом
+  saveBtn.addEventListener("click", () => {
+    announcementText = announcementInput.value.trim() || "Все системы работают стабильно";
+    for (const key in systems) {
+      const sel = document.getElementById("status-" + key);
+      if (sel && systems[key]) {
+        if (systems[key].status !== sel.value) {
+          addHistory(key, systems[key].status, sel.value);
+        }
+        systems[key].status = sel.value;
+      }
+    }
+    saveData();
+    renderAnnouncement();
+    renderSystems(searchInput.value);
+    updateAdminPanel();
+    alert("Данные сохранены");
+  });
 
+  // Закрыть/открыть сайт
+  closeSiteBtn.addEventListener("click", () => {
+    siteClosed = !siteClosed;
+    saveData();
+    updateAdminPanel();
+  });
+
+  // Поиск систем
+  searchInput.addEventListener("input", () => {
+    renderSystems(searchInput.value);
+  });
+
+  // Экспорт истории в CSV
+  exportHistoryBtn.addEventListener("click", () => {
+    if (history.length === 0) {
+      alert("История пуста.");
+      return;
+    }
+    let csv = "Дата,Компонент,Старый статус,Новый статус\n";
+    history.forEach(item => {
+      const d = new Date(item.time);
+      csv += `"${d.toLocaleString()}","${systems[item.component]?.name || item.component}","${statusText(item.oldStatus)}","${statusText(item.newStatus)}"\n`;
+    });
+    const blob = new Blob([csv], {type: "text/csv;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "history.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // Инициализация
+  loadData();
+  renderAnnouncement();
+  renderSystems();
+</script>
 </body>
 </html>
