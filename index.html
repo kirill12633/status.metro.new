@@ -1,199 +1,200 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<title>Статус сервисов - Админка</title>
-<style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f7fa;
-    padding: 30px;
-    max-width: 700px;
-    margin: auto;
-  }
-  h1 {
-    text-align: center;
-    color: #333;
-  }
-  .login-block {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 10px rgb(0 0 0 / 0.1);
-  }
-  label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-  }
-  input[type=password] {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    margin-bottom: 15px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-  }
-  button {
-    background-color: #4caf50;
-    color: white;
-    padding: 10px 18px;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  button:hover {
-    background-color: #45a049;
-  }
-  .service {
-    background: white;
-    padding: 20px;
-    margin-bottom: 15px;
-    border-radius: 10px;
-    box-shadow: 0 1px 5px rgb(0 0 0 / 0.1);
-  }
-  .service h3 {
-    margin-top: 0;
-    color: #222;
-  }
-  textarea {
-    width: 100%;
-    min-height: 60px;
-    font-size: 15px;
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    resize: vertical;
-    box-sizing: border-box;
-  }
-  .update-btn {
-    margin-top: 10px;
-    background-color: #2196f3;
-  }
-  .update-btn:hover {
-    background-color: #1976d2;
-  }
-  .hidden {
-    display: none;
-  }
-  .message {
-    margin: 15px 0;
-    padding: 10px;
-    border-radius: 6px;
-  }
-  .message.success {
-    background-color: #d4edda;
-    color: #155724;
-  }
-  .message.error {
-    background-color: #f8d7da;
-    color: #721c24;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Страница статусов — Метро New</title>
+  <style>
+    /* Общие стили */
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f6f8fa;
+      margin: 0;
+      padding: 0;
+      color: #24292e;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 20px 40px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 24px;
+      letter-spacing: 1.2px;
+    }
+
+    header span.status-text {
+      display: block;
+      font-weight: 400;
+      font-size: 16px;
+      margin-top: 4px;
+      color: #a8c256; /* зеленый */
+    }
+
+    main {
+      flex: 1;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      width: 100%;
+    }
+
+    .service-card {
+      background: #fff;
+      padding: 20px 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: box-shadow 0.3s ease;
+    }
+    .service-card:hover {
+      box-shadow: 0 4px 14px rgb(0 0 0 / 0.15);
+    }
+
+    .service-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .service-name {
+      font-weight: 700;
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      color: #586069;
+    }
+    .status-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 12px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .status-online {
+      background-color: #28a745; /* зеленый */
+      box-shadow: 0 0 8px #28a745;
+    }
+    .status-maintenance {
+      background-color: #dbab09; /* желтый */
+      box-shadow: 0 0 8px #dbab09;
+    }
+    .status-offline {
+      background-color: #d73a49; /* красный */
+      box-shadow: 0 0 8px #d73a49;
+    }
+
+    button.open-button {
+      padding: 10px 24px;
+      background: #0366d6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.25s ease;
+      box-shadow: 0 2px 6px rgb(3 102 214 / 0.4);
+    }
+    button.open-button:hover {
+      background: #024fa2;
+      box-shadow: 0 3px 9px rgb(2 79 162 / 0.7);
+    }
+
+    footer {
+      background: #f0f0f0;
+      color: #666;
+      text-align: center;
+      padding: 16px 10px;
+      font-size: 14px;
+      user-select: none;
+    }
+
+    @media (max-width: 600px) {
+      .service-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      button.open-button {
+        margin-top: 12px;
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<h1>Админка статусов сервисов</h1>
+<header>
+  Метро New Status
+  <span class="status-text">Все системы работают стабильно</span>
+</header>
 
-<div class="login-block" id="loginBlock">
-  <label for="password">Введите пароль администратора:</label>
-  <input type="password" id="password" placeholder="Пароль" />
-  <button onclick="login()">Войти</button>
-  <div id="loginMessage" class="message hidden"></div>
-</div>
+<main>
+  <div class="service-card">
+    <div class="service-info">
+      <div class="service-name">Discord</div>
+      <div class="status-row">
+        <span class="status-dot status-online"></span> Online
+      </div>
+    </div>
+    <button class="open-button" onclick="window.open('https://discord.com', '_blank')">Открыть</button>
+  </div>
 
-<div id="adminPanel" class="hidden">
-  <div id="services"></div>
-</div>
+  <div class="service-card">
+    <div class="service-info">
+      <div class="service-name">Roblox</div>
+      <div class="status-row">
+        <span class="status-dot status-maintenance"></span> Технические работы
+      </div>
+    </div>
+    <button class="open-button" onclick="window.open('https://www.roblox.com', '_blank')">Открыть</button>
+  </div>
 
-<script>
-  const API_URL = '/api/statuses';
-  let adminPassword = null;
+  <div class="service-card">
+    <div class="service-info">
+      <div class="service-name">YouTube</div>
+      <div class="status-row">
+        <span class="status-dot status-online"></span> Online
+      </div>
+    </div>
+    <button class="open-button" onclick="window.open('https://www.youtube.com', '_blank')">Открыть</button>
+  </div>
 
-  const loginBlock = document.getElementById('loginBlock');
-  const adminPanel = document.getElementById('adminPanel');
-  const loginMessage = document.getElementById('loginMessage');
+  <div class="service-card">
+    <div class="service-info">
+      <div class="service-name">Telegram</div>
+      <div class="status-row">
+        <span class="status-dot status-offline"></span> Не доступен
+      </div>
+    </div>
+    <button class="open-button" onclick="window.open('https://telegram.org', '_blank')">Открыть</button>
+  </div>
 
-  async function fetchStatuses() {
-    const res = await fetch(API_URL);
-    const data = await res.json();
-    const container = document.getElementById('services');
-    container.innerHTML = '';
+  <div class="service-card">
+    <div class="service-info">
+      <div class="service-name">Сайт</div>
+      <div class="status-row">
+        <span class="status-dot status-online"></span> Online
+      </div>
+    </div>
+    <button class="open-button" onclick="window.open('/', '_blank')">Открыть</button>
+  </div>
+</main>
 
-    data.forEach(service => {
-      const div = document.createElement('div');
-      div.className = 'service';
-      div.innerHTML = `
-        <h3>${service.name}</h3>
-        <textarea id="status-${service.id}">${service.status}</textarea>
-        <button class="update-btn" onclick="updateStatus(${service.id})">Обновить статус</button>
-        <div id="msg-${service.id}" class="message hidden"></div>
-      `;
-      container.appendChild(div);
-    });
-  }
-
-  async function updateStatus(id) {
-    const textarea = document.getElementById('status-' + id);
-    const newStatus = textarea.value.trim();
-    const msgDiv = document.getElementById('msg-' + id);
-
-    if (!newStatus) {
-      showMessage(msgDiv, 'Статус не может быть пустым', 'error');
-      return;
-    }
-
-    const res = await fetch(`${API_URL}/${id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Admin-Password': adminPassword,
-      },
-      body: JSON.stringify({ status: newStatus }),
-    });
-
-    if (res.ok) {
-      showMessage(msgDiv, 'Статус обновлен и отправлен в Discord!', 'success');
-    } else if (res.status === 401) {
-      showMessage(msgDiv, 'Неверный пароль. Пожалуйста, перезайдите.', 'error');
-      logout();
-    } else {
-      showMessage(msgDiv, 'Ошибка обновления статуса', 'error');
-    }
-  }
-
-  function showMessage(element, message, type) {
-    element.textContent = message;
-    element.className = 'message ' + type;
-    element.classList.remove('hidden');
-    setTimeout(() => {
-      element.classList.add('hidden');
-    }, 4000);
-  }
-
-  function login() {
-    const input = document.getElementById('password');
-    if (input.value === '2255') {
-      adminPassword = input.value;
-      loginBlock.classList.add('hidden');
-      adminPanel.classList.remove('hidden');
-      fetchStatuses();
-    } else {
-      loginMessage.textContent = 'Неверный пароль';
-      loginMessage.classList.remove('hidden');
-    }
-  }
-
-  function logout() {
-    adminPassword = null;
-    adminPanel.classList.add('hidden');
-    loginBlock.classList.remove('hidden');
-    document.getElementById('password').value = '';
-  }
-</script>
+<footer>
+  © 2025 Метро New. Все права защищены.
+</footer>
 
 </body>
 </html>
