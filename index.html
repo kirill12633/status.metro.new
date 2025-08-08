@@ -1,36 +1,127 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<title>Статус системы</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-  body { background-color: #f3f4f6; }
-</style>
+  <meta charset="UTF-8" />
+  <title>Статус системы</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+      color: #333;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    #status {
+      font-size: 24px;
+      margin-bottom: 40px;
+      padding: 20px;
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      border-radius: 8px;
+      width: 400px;
+      text-align: center;
+      color: #155724;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      width: 400px;
+      gap: 15px;
+    }
+    input[type="text"], input[type="password"] {
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    input[type="text"]:focus, input[type="password"]:focus {
+      border-color: #007bff;
+    }
+    button {
+      padding: 12px;
+      font-size: 18px;
+      border: none;
+      border-radius: 6px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #message {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen p-6">
-  <h1 class="text-4xl font-bold mb-6 text-green-600">Статус системы</h1>
-  <div id="status-box" class="bg-white p-8 rounded shadow w-full max-w-xl text-center text-xl">
-    Загрузка...
-  </div>
-  <div class="mt-8">
-    <a href="/admin" class="text-blue-600 underline">Админка</a>
-  </div>
+<body>
+  <h1>Статус системы</h1>
+  <div id="status">Загрузка статуса...</div>
+
+  <form id="statusForm">
+    <input type="password" id="password" placeholder="Введите пароль" required />
+    <input type="text" id="newStatus" placeholder="Новый статус" required />
+    <button type="submit">Обновить статус</button>
+    <div id="message"></div>
+  </form>
 
   <script>
     async function fetchStatus() {
       try {
         const res = await fetch('/api/status');
         const data = await res.json();
-        document.getElementById('status-box').textContent = data.status;
-      } catch (e) {
-        document.getElementById('status-box').textContent = "Ошибка загрузки статуса.";
+        document.getElementById('status').textContent = data.status;
+      } catch {
+        document.getElementById('status').textContent = 'Ошибка загрузки статуса';
       }
     }
 
+    document.getElementById('statusForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const password = document.getElementById('password').value.trim();
+      const newStatus = document.getElementById('newStatus').value.trim();
+      const messageDiv = document.getElementById('message');
+
+      if (!password || !newStatus) {
+        messageDiv.textContent = 'Пожалуйста, заполните все поля';
+        messageDiv.style.color = 'red';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ password, status: newStatus })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          messageDiv.textContent = data.message;
+          messageDiv.style.color = 'green';
+          document.getElementById('status').textContent = newStatus;
+          document.getElementById('password').value = '';
+          document.getElementById('newStatus').value = '';
+        } else {
+          messageDiv.textContent = data.message || 'Ошибка';
+          messageDiv.style.color = 'red';
+        }
+      } catch {
+        messageDiv.textContent = 'Ошибка запроса';
+        messageDiv.style.color = 'red';
+      }
+    });
+
     fetchStatus();
-    // Можно обновлять статус каждые 30 сек:
-    setInterval(fetchStatus, 30000);
   </script>
 </body>
 </html>
