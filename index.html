@@ -2,126 +2,232 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Статус системы</title>
+  <title>Админка статусов проекта</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f5f7fa;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px;
-      color: #333;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f0f4f8;
+      color: #222;
     }
     h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #34495e;
+    }
+    .status-block {
+      background: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .status-block h2 {
+      margin-top: 0;
+      color: #2c3e50;
+      font-size: 1.2em;
       margin-bottom: 10px;
     }
-    #status {
-      font-size: 24px;
-      margin-bottom: 40px;
-      padding: 20px;
-      background: #d4edda;
-      border: 1px solid #c3e6cb;
-      border-radius: 8px;
-      width: 400px;
-      text-align: center;
-      color: #155724;
+    .status-display {
+      font-weight: bold;
+      font-size: 1.1em;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      background: #ecf0f1;
+      color: #2c3e50;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .status-ok {
+      color: #27ae60;
+    }
+    .status-error {
+      color: #c0392b;
     }
     form {
       display: flex;
-      flex-direction: column;
-      width: 400px;
-      gap: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
     }
     input[type="text"], input[type="password"] {
-      padding: 12px;
-      font-size: 16px;
-      border: 1px solid #ccc;
+      flex: 1 1 250px;
+      padding: 10px;
+      font-size: 1em;
       border-radius: 6px;
-      outline: none;
-      transition: border-color 0.3s;
-    }
-    input[type="text"]:focus, input[type="password"]:focus {
-      border-color: #007bff;
+      border: 1px solid #ccc;
     }
     button {
-      padding: 12px;
-      font-size: 18px;
+      padding: 12px 20px;
+      background: #2980b9;
       border: none;
       border-radius: 6px;
-      background-color: #007bff;
       color: white;
+      font-size: 1em;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background 0.3s;
+      flex-shrink: 0;
     }
     button:hover {
-      background-color: #0056b3;
+      background: #1c5980;
     }
     #message {
-      margin-top: 10px;
+      margin-top: 15px;
       font-weight: bold;
+    }
+    #message.error {
+      color: #c0392b;
+    }
+    #message.success {
+      color: #27ae60;
+    }
+    label {
+      font-weight: 600;
+      width: 120px;
+      user-select: none;
     }
   </style>
 </head>
 <body>
-  <h1>Статус системы</h1>
-  <div id="status">Загрузка статуса...</div>
 
-  <form id="statusForm">
-    <input type="password" id="password" placeholder="Введите пароль" required />
-    <input type="text" id="newStatus" placeholder="Новый статус" required />
-    <button type="submit">Обновить статус</button>
-    <div id="message"></div>
-  </form>
+<h1>Админка управления статусами проекта</h1>
 
-  <script>
-    async function fetchStatus() {
-      try {
-        const res = await fetch('/api/status');
-        const data = await res.json();
-        document.getElementById('status').textContent = data.status;
-      } catch {
-        document.getElementById('status').textContent = 'Ошибка загрузки статуса';
-      }
+<div id="statuses">
+  <div class="status-block" data-key="server">
+    <h2>Статус сервера</h2>
+    <div class="status-display" id="status-server">Загрузка...</div>
+  </div>
+  <div class="status-block" data-key="game">
+    <h2>Статус игры</h2>
+    <div class="status-display" id="status-game">Загрузка...</div>
+  </div>
+  <div class="status-block" data-key="telegram">
+    <h2>Статус канала Telegram</h2>
+    <div class="status-display" id="status-telegram">Загрузка...</div>
+  </div>
+  <div class="status-block" data-key="website">
+    <h2>Статус сайта</h2>
+    <div class="status-display" id="status-website">Загрузка...</div>
+  </div>
+</div>
+
+<form id="status-form">
+  <label for="status-select">Выберите статус для изменения:</label>
+  <select id="status-select" required style="flex:1 1 200px; padding:10px; border-radius:6px; border:1px solid #ccc;">
+    <option value="" disabled selected>-- Выберите систему --</option>
+    <option value="server">Сервер</option>
+    <option value="game">Игра</option>
+    <option value="telegram">Telegram канал</option>
+    <option value="website">Сайт</option>
+  </select>
+
+  <input type="text" id="new-status" placeholder="Новый статус (например, Все работает)" required />
+
+  <input type="password" id="password" placeholder="Пароль администратора" required style="flex:1 1 200px;" />
+
+  <button type="submit">Обновить статус</button>
+</form>
+
+<div id="message"></div>
+
+<script>
+  const webhookURL = 'https://discord.com/api/webhooks/1403274247232819271/Ui4g8IJEMhdfwurKFHag9LUwHh9lRzC7oGF5i29MaDamHioSgubRuFBvT8GyHi39eIKc';
+  const ADMIN_PASSWORD = '2255';
+
+  // Изначальные статусы (можно менять)
+  let statuses = {
+    server: 'Все системы работают стабильно',
+    game: 'Все системы работают стабильно',
+    telegram: 'Все системы работают стабильно',
+    website: 'Все системы работают стабильно'
+  };
+
+  // Элементы показа статусов
+  function updateStatusDisplay(key) {
+    const el = document.getElementById('status-' + key);
+    if (!el) return;
+
+    const status = statuses[key];
+    el.textContent = status;
+
+    // Подкрашиваем зеленым если содержит "работают", красным — если нет
+    if (/работа/i.test(status)) {
+      el.classList.add('status-ok');
+      el.classList.remove('status-error');
+    } else {
+      el.classList.add('status-error');
+      el.classList.remove('status-ok');
+    }
+  }
+
+  // Обновляем все при загрузке
+  function updateAllStatuses() {
+    for (const key in statuses) {
+      updateStatusDisplay(key);
+    }
+  }
+
+  // Показываем сообщение
+  const message = document.getElementById('message');
+  function showMessage(text, type='') {
+    message.textContent = text;
+    message.className = type;
+  }
+
+  // Отправляем в Discord через webhook
+  async function sendToDiscord(system, status) {
+    const content = `Обновлён статус **${system}**: ${status}`;
+    const res = await fetch(webhookURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content }),
+    });
+    if (!res.ok) throw new Error('Ошибка при отправке в Discord');
+  }
+
+  // Обработка формы
+  const form = document.getElementById('status-form');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    showMessage('');
+
+    const system = document.getElementById('status-select').value;
+    const newStatus = document.getElementById('new-status').value.trim();
+    const password = document.getElementById('password').value;
+
+    if (password !== ADMIN_PASSWORD) {
+      showMessage('Ошибка: неверный пароль', 'error');
+      return;
+    }
+    if (!system) {
+      showMessage('Ошибка: выберите систему для обновления', 'error');
+      return;
+    }
+    if (!newStatus) {
+      showMessage('Ошибка: статус не может быть пустым', 'error');
+      return;
     }
 
-    document.getElementById('statusForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const password = document.getElementById('password').value.trim();
-      const newStatus = document.getElementById('newStatus').value.trim();
-      const messageDiv = document.getElementById('message');
+    try {
+      await sendToDiscord(system, newStatus);
+      statuses[system] = newStatus;
+      updateStatusDisplay(system);
+      showMessage('Статус успешно обновлён!', 'success');
 
-      if (!password || !newStatus) {
-        messageDiv.textContent = 'Пожалуйста, заполните все поля';
-        messageDiv.style.color = 'red';
-        return;
-      }
+      form.reset();
+    } catch (err) {
+      console.error(err);
+      showMessage('Ошибка: не удалось отправить статус в Discord', 'error');
+    }
+  });
 
-      try {
-        const res = await fetch('/api/status', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: new URLSearchParams({ password, status: newStatus })
-        });
-        const data = await res.json();
+  updateAllStatuses();
+</script>
 
-        if (res.ok) {
-          messageDiv.textContent = data.message;
-          messageDiv.style.color = 'green';
-          document.getElementById('status').textContent = newStatus;
-          document.getElementById('password').value = '';
-          document.getElementById('newStatus').value = '';
-        } else {
-          messageDiv.textContent = data.message || 'Ошибка';
-          messageDiv.style.color = 'red';
-        }
-      } catch {
-        messageDiv.textContent = 'Ошибка запроса';
-        messageDiv.style.color = 'red';
-      }
-    });
-
-    fetchStatus();
-  </script>
 </body>
 </html>
