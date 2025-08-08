@@ -1,744 +1,199 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Метро New Статус</title>
-  <style>
-    /* Сброс */
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f9fafb;
-      color: #333;
-      margin: 0;
-      padding: 0;
-    }
-
-    header {
-      background: #4a90e2;
-      color: white;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 6px rgba(74,144,226,0.4);
-    }
-    header h1 {
-      margin: 0;
-      font-weight: 700;
-      font-size: 24px;
-    }
-
-    .login {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .login input[type="password"] {
-      padding: 6px 10px;
-      font-size: 14px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      outline-offset: 2px;
-      transition: border-color 0.2s;
-    }
-    .login input[type="password"]:focus {
-      border-color: #2e6fde;
-      outline: none;
-    }
-    .login button {
-      background: #fff;
-      border: none;
-      color: #4a90e2;
-      font-weight: 700;
-      padding: 7px 14px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background 0.3s, color 0.3s;
-    }
-    .login button:hover {
-      background: #2e6fde;
-      color: white;
-    }
-
-    main {
-      display: flex;
-      gap: 25px;
-      padding: 25px 20px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .left-panel {
-      flex: 2;
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    }
-
-    .section {
-      margin-bottom: 30px;
-    }
-    .section h2 {
-      border-bottom: 2px solid #4a90e2;
-      padding-bottom: 6px;
-      margin-bottom: 15px;
-      font-weight: 700;
-      color: #2e6fde;
-    }
-    .status-group {
-      margin-bottom: 15px;
-      padding-left: 10px;
-    }
-    .status-group h3 {
-      font-weight: 600;
-      color: #555;
-      margin-bottom: 8px;
-    }
-
-    .status-item {
-      display: flex;
-      align-items: center;
-      margin-bottom: 6px;
-      font-size: 15px;
-      color: #444;
-    }
-    .status-label {
-      flex: 1.1;
-    }
-    .status-value {
-      flex: 1;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .status-dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-    .online {
-      background-color: #28a745;
-      box-shadow: 0 0 6px #28a745aa;
-    }
-    .offline {
-      background-color: #dc3545;
-      box-shadow: 0 0 6px #dc3545aa;
-    }
-    .maintenance {
-      background-color: #ffc107;
-      box-shadow: 0 0 6px #ffc107aa;
-    }
-
-    .right-panel {
-      flex: 1;
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      font-size: 15px;
-      color: #555;
-      line-height: 1.5;
-    }
-    .right-panel h2 {
-      margin-top: 0;
-      color: #2e6fde;
-      font-weight: 700;
-      margin-bottom: 15px;
-    }
-    .info-row {
-      margin-bottom: 12px;
-    }
-    .info-row strong {
-      color: #333;
-    }
-
-    /* Админка */
-    #adminPanel {
-      position: fixed;
-      top: 70px;
-      right: 20px;
-      width: 320px;
-      max-height: 85vh;
-      overflow-y: auto;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-      padding: 15px 20px;
-      display: none;
-      z-index: 1000;
-    }
-    #adminPanel h3 {
-      margin-top: 0;
-      font-weight: 700;
-      color: #4a90e2;
-      margin-bottom: 15px;
-      text-align: center;
-    }
-    #adminPanel label {
-      font-weight: 600;
-      display: block;
-      margin-top: 12px;
-      margin-bottom: 4px;
-      color: #444;
-    }
-    #adminPanel input[type="text"],
-    #adminPanel input[type="password"] {
-      width: 100%;
-      padding: 7px 10px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      transition: border-color 0.2s;
-    }
-    #adminPanel input[type="text"]:focus,
-    #adminPanel input[type="password"]:focus {
-      border-color: #4a90e2;
-      outline: none;
-    }
-    #adminPanel input[type="checkbox"] {
-      margin-right: 6px;
-      vertical-align: middle;
-      cursor: pointer;
-    }
-    #adminPanel button[type="submit"] {
-      margin-top: 20px;
-      width: 100%;
-      background-color: #4a90e2;
-      border: none;
-      color: white;
-      font-weight: 700;
-      padding: 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s;
-    }
-    #adminPanel button[type="submit"]:hover {
-      background-color: #2e6fde;
-    }
-    #adminCloseBtn {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 24px;
-      color: #999;
-      border: none;
-      background: none;
-      cursor: pointer;
-      transition: color 0.2s;
-    }
-    #adminCloseBtn:hover {
-      color: #4a90e2;
-    }
-
-    /* Overlay закрытия сайта */
-    #siteClosedOverlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(255,255,255,0.95);
-      color: #333;
-      font-size: 20px;
-      font-weight: 700;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      z-index: 900;
-      text-align: center;
-      padding: 20px;
-    }
-    #siteClosedOverlay small {
-      font-weight: 400;
-      font-size: 16px;
-      margin-top: 8px;
-      color: #666;
-    }
-
-    /* Кнопка открыть сайт */
-    #openSiteButton {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #4a90e2;
-      border: none;
-      color: white;
-      font-weight: 700;
-      padding: 14px 20px;
-      border-radius: 50px;
-      cursor: pointer;
-      display: none;
-      box-shadow: 0 5px 15px rgba(74,144,226,0.5);
-      transition: background-color 0.3s;
-      z-index: 950;
-    }
-    #openSiteButton:hover {
-      background-color: #2e6fde;
-    }
-
-    /* Модальное окно */
-    #codeModal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 10000;
-    }
-    #codeModalContent {
-      background: white;
-      border-radius: 10px;
-      padding: 25px 30px;
-      max-width: 320px;
-      width: 90%;
-      text-align: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    }
-    #codeModalContent h3 {
-      margin-top: 0;
-      margin-bottom: 20px;
-      color: #4a90e2;
-    }
-    #codeModalContent input {
-      width: 100%;
-      padding: 8px 12px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      margin-bottom: 20px;
-      outline-offset: 2px;
-      transition: border-color 0.2s;
-    }
-    #codeModalContent input:focus {
-      border-color: #4a90e2;
-      outline: none;
-    }
-    #codeModalContent button {
-      font-weight: 700;
-      padding: 10px 18px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      margin: 0 6px;
-      font-size: 15px;
-      transition: background-color 0.3s;
-    }
-    #codeSubmitBtn {
-      background-color: #4a90e2;
-      color: white;
-    }
-    #codeSubmitBtn:hover {
-      background-color: #2e6fde;
-    }
-    #codeCancelBtn {
-      background-color: #ccc;
-      color: #444;
-    }
-    #codeCancelBtn:hover {
-      background-color: #999;
-      color: white;
-    }
-
-  </style>
+<meta charset="UTF-8" />
+<title>Статус сервисов - Админка</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    padding: 30px;
+    max-width: 700px;
+    margin: auto;
+  }
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+  .login-block {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgb(0 0 0 / 0.1);
+  }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  input[type=password] {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+  button {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #45a049;
+  }
+  .service {
+    background: white;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0 1px 5px rgb(0 0 0 / 0.1);
+  }
+  .service h3 {
+    margin-top: 0;
+    color: #222;
+  }
+  textarea {
+    width: 100%;
+    min-height: 60px;
+    font-size: 15px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    box-sizing: border-box;
+  }
+  .update-btn {
+    margin-top: 10px;
+    background-color: #2196f3;
+  }
+  .update-btn:hover {
+    background-color: #1976d2;
+  }
+  .hidden {
+    display: none;
+  }
+  .message {
+    margin: 15px 0;
+    padding: 10px;
+    border-radius: 6px;
+  }
+  .message.success {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  .message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+</style>
 </head>
 <body>
 
-<header>
-  <h1>Метро New Статус</h1>
-  <div class="login">
-    <input type="password" id="adminCodeInput" placeholder="Код администратора" />
-    <button id="adminLoginBtn">Вход</button>
-  </div>
-</header>
+<h1>Админка статусов сервисов</h1>
 
-<main id="mainContent">
-  <div class="left-panel">
-    <div class="section">
-      <h2>Discord Сервер</h2>
-      <div class="status-group">
-        <h3>Основные настройки</h3>
-        <div class="status-item"><div class="status-label">Основной статус:</div> <div class="status-value" id="discordMainStatus"><span class="status-dot online"></span> Олайн</div></div>
-      </div>
-      <div class="status-group">
-        <h3>Сервер</h3>
-        <div class="status-item"><div class="status-label">Статус сервера:</div> <div class="status-value" id="discordServerStatus"><span class="status-dot online"></span> Олайн</div></div>
-      </div>
-      <div class="status-group">
-        <h3>Другие</h3>
-        <div class="status-item"><div class="status-label">Чат:</div> <div class="status-value" id="discordChatStatus"><span class="status-dot online"></span> Олайн</div></div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>Roblox Игры</h2>
-      <div class="status-group">
-        <h3>Основные настройки</h3>
-        <div class="status-item"><div class="status-label">Основной статус:</div> <div class="status-value" id="robloxMainStatus"><span class="status-dot online"></span> Олайн</div></div>
-      </div>
-      <div class="status-group">
-        <h3>Сервер</h3>
-        <div class="status-item"><div class="status-label">Статус сервера:</div> <div class="status-value" id="robloxServerStatus"><span class="status-dot online"></span> Олайн</div></div>
-      </div>
-      <div class="status-group">
-        <h3>Другие</h3>
-        <div class="status-item"><div class="status-label">Другие настройки:</div> <div class="status-value" id="robloxOtherStatus"><span class="status-dot online"></span> Олайн</div></div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>Ютуб канал</h2>
-      <div class="status-item"><div class="status-label">Статус:</div> <div class="status-value" id="youtubeStatus"><span class="status-dot online"></span> Олайн</div></div>
-    </div>
-
-    <div class="section">
-      <h2>Телеграм канал</h2>
-      <div class="status-item"><div class="status-label">Статус:</div> <div class="status-value" id="telegramStatus"><span class="status-dot online"></span> Олайн</div></div>
-    </div>
-
-    <div class="section">
-      <h2>Сайт</h2>
-      <div class="status-item"><div class="status-label">API:</div> <div class="status-value" id="siteApiStatus"><span class="status-dot online"></span> Работает</div></div>
-      <div class="status-item"><div class="status-label">Работа сайта:</div> <div class="status-value" id="siteWorkStatus"><span class="status-dot online"></span> Работает</div></div>
-      <div class="status-item"><div class="status-label">Другие настройки:</div> <div class="status-value" id="siteOtherStatus"><span class="status-dot online"></span> Включены</div></div>
-    </div>
-  </div>
-
-  <div class="right-panel">
-    <h2>Информация о проекте</h2>
-    <div class="info-row"><strong>Дата запуска:</strong> 20 марта 2024</div>
-    <div class="info-row"><strong>Онлайн игроков:</strong> <span id="onlinePlayers">Загрузка...</span></div>
-    <div class="info-row"><strong>Загрузка:</strong> <span id="loadStatus">Нормальная</span></div>
-    <div class="info-row"><strong>Последнее обновление:</strong> <span id="lastUpdate">21 апреля 2025</span></div>
-    <div class="info-row"><strong>Следующее обновление:</strong> <span id="nextUpdate">28 апреля 2025</span></div>
-  </div>
-</main>
-
-<!-- Админ панель -->
-<div id="adminPanel">
-  <button id="adminCloseBtn" title="Закрыть админку">&times;</button>
-  <h3>Панель администратора</h3>
-
-  <label>Код для закрытия сайта:</label>
-  <input type="password" id="closeSiteCode" placeholder="Введите код для закрытия сайта" />
-
-  <label><input type="checkbox" id="closeSiteCheckbox" /> Закрыть сайт (технические работы)</label>
-
-  <hr />
-
-  <h4>Discord Сервер</h4>
-  <label>Основной статус:</label>
-  <select id="discordMainStatusSelect">
-    <option value="online">Онлайн</option>
-    <option value="offline">Офлайн</option>
-    <option value="maintenance">Тех. работы</option>
-  </select>
-  <label>Статус сервера:</label>
-  <select id="discordServerStatusSelect">
-    <option value="online">Онлайн</option>
-    <option value="offline">Офлайн</option>
-    <option value="maintenance">Тех. работы</option>
-  </select>
-  <label>Чат:</label>
-  <select id="discordChatStatusSelect">
-    <option value="online">Онлайн</option>
-    <option value="offline">Офлайн</option>
-    <option value="maintenance">Тех. работы</option>
-  </select>
-
-  <hr />
-
-  <h4>Roblox Игры</h4>
-  <label>Основной статус:</label>
-  <select id="robloxMainStatusSelect">
-    <option value="online">Онлайн</option>
-    <option value="offline">Офлайн</option>
-    <option value="maintenance">Тех. работы</option>
-  </select>
-  <label>Статус сервера:</label>
-  <select id="robloxServerStatusSelect">
-    <option value="online">Онлайн</option>
-    <option value="offline">Офлайн</option>
-    <option value="maintenance">Тех. работы</option>
-  </select>
-  <label>Другие настройки:</label>
-  <select id="robloxOtherStatusSelect">
-    <option value="online">Онлайн</option>
-    <option value="offline">Офлайн</option>
-    <option value="maintenance">Тех. работы</option>
-  </select>
-
-  <hr />
-
-  <h4>Ютуб канал</h4>
-  <label>Статус:</label>
-  <select id="youtubeStatusSelect">
-    <option value="online">Онлайн</option>
-    <option value="offline">Офлайн</option>
-    <option value="maintenance">Тех. работы</option>
-  </select>
-
-  <hr />
-
-  <h4>Телеграм канал</h4>
-  <label>Статус:</label>
-  <select id="telegramStatusSelect">
-    <option value="online">Онлайн</option>
-    <option value="offline">Офлайн</option>
-    <option value="maintenance">Тех. работы</option>
-  </select>
-
-  <hr />
-
-  <h4>Сайт</h4>
-  <label>API:</label>
-  <select id="siteApiStatusSelect">
-    <option value="online">Работает</option>
-    <option value="offline">Не работает</option>
-    <option value="maintenance">Тех. работы</option>
-  </select>
-  <label>Работа сайта:</label>
-  <select id="siteWorkStatusSelect">
-    <option value="online">Работает</option>
-    <option value="offline">Не работает</option>
-    <option value="maintenance">Тех. работы</option>
-  </select>
-  <label>Другие настройки:</label>
-  <select id="siteOtherStatusSelect">
-    <option value="online">Включены</option>
-    <option value="offline">Выключены</option>
-    <option value="maintenance">Тех. работы</option>
-  </select>
-
-  <button id="saveSettingsBtn">Сохранить настройки</button>
+<div class="login-block" id="loginBlock">
+  <label for="password">Введите пароль администратора:</label>
+  <input type="password" id="password" placeholder="Пароль" />
+  <button onclick="login()">Войти</button>
+  <div id="loginMessage" class="message hidden"></div>
 </div>
 
-<!-- Оверлей закрытия сайта -->
-<div id="siteClosedOverlay">
-  <div>Сайт закрыт на технические работы.</div>
-  <small>Пожалуйста, зайдите позже.</small>
-</div>
-
-<!-- Кнопка открыть сайт -->
-<button id="openSiteButton" title="Открыть сайт">Открыть сайт</button>
-
-<!-- Модальное окно для ввода кода -->
-<div id="codeModal">
-  <div id="codeModalContent">
-    <h3>Введите код администратора</h3>
-    <input type="password" id="codeInput" placeholder="Код" />
-    <div>
-      <button id="codeSubmitBtn">Подтвердить</button>
-      <button id="codeCancelBtn">Отмена</button>
-    </div>
-  </div>
+<div id="adminPanel" class="hidden">
+  <div id="services"></div>
 </div>
 
 <script>
-  const ADMIN_CODE = "2255";
-  const SITE_OPEN_CODE = "1234";
+  const API_URL = '/api/statuses';
+  let adminPassword = null;
 
-  const loginBtn = document.getElementById('adminLoginBtn');
-  const adminCodeInput = document.getElementById('adminCodeInput');
+  const loginBlock = document.getElementById('loginBlock');
   const adminPanel = document.getElementById('adminPanel');
-  const adminCloseBtn = document.getElementById('adminCloseBtn');
-  const siteClosedOverlay = document.getElementById('siteClosedOverlay');
-  const openSiteButton = document.getElementById('openSiteButton');
-  const codeModal = document.getElementById('codeModal');
-  const codeInput = document.getElementById('codeInput');
-  const codeSubmitBtn = document.getElementById('codeSubmitBtn');
-  const codeCancelBtn = document.getElementById('codeCancelBtn');
-  const mainContent = document.getElementById('mainContent');
+  const loginMessage = document.getElementById('loginMessage');
 
-  // Элементы статусов
-  const statuses = {
-    discordMainStatus: document.getElementById('discordMainStatus'),
-    discordServerStatus: document.getElementById('discordServerStatus'),
-    discordChatStatus: document.getElementById('discordChatStatus'),
-    robloxMainStatus: document.getElementById('robloxMainStatus'),
-    robloxServerStatus: document.getElementById('robloxServerStatus'),
-    robloxOtherStatus: document.getElementById('robloxOtherStatus'),
-    youtubeStatus: document.getElementById('youtubeStatus'),
-    telegramStatus: document.getElementById('telegramStatus'),
-    siteApiStatus: document.getElementById('siteApiStatus'),
-    siteWorkStatus: document.getElementById('siteWorkStatus'),
-    siteOtherStatus: document.getElementById('siteOtherStatus'),
-  };
+  async function fetchStatuses() {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+    const container = document.getElementById('services');
+    container.innerHTML = '';
 
-  // Выборы админки
-  const selects = {
-    discordMainStatusSelect: document.getElementById('discordMainStatusSelect'),
-    discordServerStatusSelect: document.getElementById('discordServerStatusSelect'),
-    discordChatStatusSelect: document.getElementById('discordChatStatusSelect'),
-    robloxMainStatusSelect: document.getElementById('robloxMainStatusSelect'),
-    robloxServerStatusSelect: document.getElementById('robloxServerStatusSelect'),
-    robloxOtherStatusSelect: document.getElementById('robloxOtherStatusSelect'),
-    youtubeStatusSelect: document.getElementById('youtubeStatusSelect'),
-    telegramStatusSelect: document.getElementById('telegramStatusSelect'),
-    siteApiStatusSelect: document.getElementById('siteApiStatusSelect'),
-    siteWorkStatusSelect: document.getElementById('siteWorkStatusSelect'),
-    siteOtherStatusSelect: document.getElementById('siteOtherStatusSelect'),
-  };
-
-  const closeSiteCheckbox = document.getElementById('closeSiteCheckbox');
-  const closeSiteCodeInput = document.getElementById('closeSiteCode');
-  const saveSettingsBtn = document.getElementById('saveSettingsBtn');
-
-  // Данные по умолчанию
-  let data = {
-    siteClosed: false,
-    closeCode: "2255",
-    statuses: {
-      discordMainStatus: "online",
-      discordServerStatus: "online",
-      discordChatStatus: "online",
-      robloxMainStatus: "online",
-      robloxServerStatus: "online",
-      robloxOtherStatus: "online",
-      youtubeStatus: "online",
-      telegramStatus: "online",
-      siteApiStatus: "online",
-      siteWorkStatus: "online",
-      siteOtherStatus: "online",
-    }
-  };
-
-  // Загрузка данных из localStorage
-  function loadData() {
-    let saved = localStorage.getItem('statusMetroData');
-    if (saved) {
-      try {
-        data = JSON.parse(saved);
-      } catch {
-        // Ошибка - оставляем по умолчанию
-      }
-    }
+    data.forEach(service => {
+      const div = document.createElement('div');
+      div.className = 'service';
+      div.innerHTML = `
+        <h3>${service.name}</h3>
+        <textarea id="status-${service.id}">${service.status}</textarea>
+        <button class="update-btn" onclick="updateStatus(${service.id})">Обновить статус</button>
+        <div id="msg-${service.id}" class="message hidden"></div>
+      `;
+      container.appendChild(div);
+    });
   }
 
-  // Сохраняем данные в localStorage
-  function saveData() {
-    localStorage.setItem('statusMetroData', JSON.stringify(data));
-  }
+  async function updateStatus(id) {
+    const textarea = document.getElementById('status-' + id);
+    const newStatus = textarea.value.trim();
+    const msgDiv = document.getElementById('msg-' + id);
 
-  // Обновление статусов в интерфейсе
-  function updateStatuses() {
-    for (const key in data.statuses) {
-      let val = data.statuses[key];
-      let el = statuses[key];
-      if (!el) continue;
-
-      let text = "";
-      let dotClass = "";
-      if (val === "online") {
-        text = key.includes("site") ? "Работает" : "Олайн";
-        dotClass = "online";
-      } else if (val === "offline") {
-        text = key.includes("site") ? "Не работает" : "Офлайн";
-        dotClass = "offline";
-      } else if (val === "maintenance") {
-        text = "Тех. работы";
-        dotClass = "maintenance";
-      }
-      el.innerHTML = `<span class="status-dot ${dotClass}"></span> ${text}`;
-    }
-  }
-
-  // Обновить чекбокс и оверлей по статусу сайта
-  function updateSiteStatusUI() {
-    if (data.siteClosed) {
-      siteClosedOverlay.style.display = "flex";
-      openSiteButton.style.display = "block";
-      mainContent.style.filter = "blur(2px)";
-    } else {
-      siteClosedOverlay.style.display = "none";
-      openSiteButton.style.display = "none";
-      mainContent.style.filter = "none";
-    }
-    closeSiteCheckbox.checked = data.siteClosed;
-    closeSiteCodeInput.value = data.closeCode;
-  }
-
-  // Отобразить админ панель
-  function openAdminPanel() {
-    adminPanel.style.display = "block";
-
-    // Заполнить selects значениями
-    for (const key in data.statuses) {
-      if (selects[key + "Select"]) {
-        selects[key + "Select"].value = data.statuses[key];
-      }
-    }
-
-    closeSiteCheckbox.checked = data.siteClosed;
-    closeSiteCodeInput.value = data.closeCode;
-  }
-
-  // Скрыть админ панель
-  function closeAdminPanel() {
-    adminPanel.style.display = "none";
-    adminCodeInput.value = "";
-  }
-
-  // Сохранить настройки из админки
-  function saveSettings() {
-    // Проверка кода
-    if (closeSiteCodeInput.value !== data.closeCode) {
-      alert("Неверный код для закрытия сайта");
+    if (!newStatus) {
+      showMessage(msgDiv, 'Статус не может быть пустым', 'error');
       return;
     }
-    data.siteClosed = closeSiteCheckbox.checked;
 
-    // Статусы
-    for (const key in data.statuses) {
-      if (selects[key + "Select"]) {
-        data.statuses[key] = selects[key + "Select"].value;
-      }
+    const res = await fetch(`${API_URL}/${id}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Admin-Password': adminPassword,
+      },
+      body: JSON.stringify({ status: newStatus }),
+    });
+
+    if (res.ok) {
+      showMessage(msgDiv, 'Статус обновлен и отправлен в Discord!', 'success');
+    } else if (res.status === 401) {
+      showMessage(msgDiv, 'Неверный пароль. Пожалуйста, перезайдите.', 'error');
+      logout();
+    } else {
+      showMessage(msgDiv, 'Ошибка обновления статуса', 'error');
     }
-    saveData();
-    updateStatuses();
-    updateSiteStatusUI();
-    alert("Настройки сохранены");
   }
 
-  // Обработчики событий
-  adminCloseBtn.onclick = closeAdminPanel;
-  saveSettingsBtn.onclick = saveSettings;
+  function showMessage(element, message, type) {
+    element.textContent = message;
+    element.className = 'message ' + type;
+    element.classList.remove('hidden');
+    setTimeout(() => {
+      element.classList.add('hidden');
+    }, 4000);
+  }
 
-  openSiteButton.onclick = () => {
-    // Показать модальное окно для ввода кода открытия
-    codeModal.style.display = "flex";
-  };
-
-  codeSubmitBtn.onclick = () => {
-    if (codeInput.value === data.closeCode) {
-      data.siteClosed = false;
-      saveData();
-      updateSiteStatusUI();
-      codeModal.style.display = "none";
-      codeInput.value = "";
+  function login() {
+    const input = document.getElementById('password');
+    if (input.value === '2255') {
+      adminPassword = input.value;
+      loginBlock.classList.add('hidden');
+      adminPanel.classList.remove('hidden');
+      fetchStatuses();
     } else {
-      alert("Неверный код");
+      loginMessage.textContent = 'Неверный пароль';
+      loginMessage.classList.remove('hidden');
     }
-  };
+  }
 
-  codeCancelBtn.onclick = () => {
-    codeModal.style.display = "none";
-    codeInput.value = "";
-  };
-
-  // Загрузка данных при старте
-  loadData();
-  updateStatuses();
-  updateSiteStatusUI();
-  openAdminPanel();
-
+  function logout() {
+    adminPassword = null;
+    adminPanel.classList.add('hidden');
+    loginBlock.classList.remove('hidden');
+    document.getElementById('password').value = '';
+  }
 </script>
+
 </body>
 </html>
