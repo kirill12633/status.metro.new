@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Метро New - Главная</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0066CC;
+            --primary-dark: #0052a3;
+            --secondary: #FFD700;
+            --dark: #1A1A1A;
+            --light: #F8F9FA;
+            --gray: #6C757D;
+            --success: #28A745;
+            --warning: #FFC107;
+            --danger: #DC3545;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .logo-icon {
+            width: 30px;
+            height: 30px;
+            background-color: var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background-color: var(--secondary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after {
+            width: 70%;
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
+            color: white;
+            padding: 6rem 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary);
+            color: var(--dark);
+            border: none;
+            padding: 0.9rem 2.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background-color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            margin-right: 1rem;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            color: white;
+        }
+        
+        .features {
+            padding: 5rem 0;
+            background-color: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title p {
+            color: var(--gray);
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+        
+        .feature-card {
+            background-color: var(--light);
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .feature-icon {
+            width: 90px;
+            height: 90px;
+            background-color: rgba(0, 102, 204, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: var(--primary);
+            font-size: 2.5rem;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 1.2rem;
+            color: var(--primary);
+            font-size: 1.4rem;
+        }
+        
+        .feature-card p {
+            color: var(--dark);
+        }
+        
+        .status-section {
+            padding: 5rem 0;
+            background-color: var(--light);
+        }
+        
+        .status-card {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .status-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .status-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--success);
+        }
+        
+        .status-indicator.warning {
+            background-color: var(--warning);
+        }
+        
+        .status-indicator.danger {
+            background-color: var(--danger);
+        }
+        
+        .status-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .status-message {
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+        
+        .status-time {
+            color: var(--gray);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .news-preview {
+            padding: 5rem 0;
+        }
+        
+        .news-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .news-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .news-image {
+            height: 200px;
+            background-color: #eee;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .news-content {
+            padding: 1.5rem;
+        }
+        
+        .news-date {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .news-date::before {
+            content: '📅';
+        }
+        
+        .news-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .news-excerpt {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .read-more {
+            display: inline-block;
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .read-more:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        .view-all {
+            text-align: center;
+            margin-top: 3rem;
+        }
+        
+        .cta {
+            background-color: var(--primary);
+            color: white;
+            padding: 5rem 0;
+            text-align: center;
+        }
+        
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cta p {
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            font-size: 1.2rem;
+        }
+        
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--secondary);
+        }
+        
+        .copyright {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero {
+                padding: 4rem 0;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .btn-primary {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .cta h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <span class="logo-icon">M</span>
+                    <span>Метро New</span>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html">Главная</a>
+                    <a href="status.html">Статус</a>
+                    <a href="news.html">Новости</a>
+                    <a href="faq.html">FAQ</a>
+                    <a href="admin.html">Админ-панель</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Добро пожаловать в Метро New</h1>
+            <p>Современное решение для городского транспорта. Быстро, удобно и надежно.</p>
+            <div class="btn-group">
+                <a href="status.html" class="btn btn-primary">Проверить статус</a>
+                <a href="news.html" class="btn">Последние новости</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Наши преимущества</h2>
+                <p>Метро New предлагает уникальные возможности для комфортного передвижения</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🚇</div>
+                    <h3>Скорость</h3>
+                    <p>Самые быстрые маршруты без пробок и задержек</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">⏱️</div>
+                    <h3>Пунктуальность</h3>
+                    <p>Точное соблюдение расписания движения</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Безопасность</h3>
+                    <p>Современные системы безопасности для вашего спокойствия</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="status-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Текущий статус</h2>
+                <p>Актуальная информация о работе системы</p>
+            </div>
+            
+            <div class="status-card">
+                <div class="status-header">
+                    <div class="status-indicator"></div>
+                    <h3 class="status-title">Все системы работают нормально</h3>
+                </div>
+                <p class="status-message">На данный момент все сервисы Метро New функционируют в штатном режиме. Мы не наблюдаем никаких сбоев или перебоев в работе.</p>
+                <p class="status-time">🕒 Последнее обновление: 15 января 2024, 14:30</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="news-preview">
+        <div class="container">
+            <div class="section-title">
+                <h2>Последние новости</h2>
+                <p>Будьте в курсе всех обновлений и событий</p>
+            </div>
+            
+            <div class="news-container">
+                <div class="news-card">
+                    <div class="news-image" style="background-image: url('https://images.unsplash.com/photo-1601758003122-53c40e686a19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
+                    <div class="news-content">
+                        <div class="news-date">15 января 2024</div>
+                        <h3 class="news-title">Обновление системы безопасности</h3>
+                        <p class="news-excerpt">Мы внедрили новые протоколы безопасности для защиты данных наших пользователей.</p>
+                        <a href="news-detail.html?id=1" class="read-more">Читать далее →</a>
+                    </div>
+                </div>
+                
+                <div class="news-card">
+                    <div class="news-image" style="background-image: url('https://images.unsplash.com/photo-1581093057305-25f0a6f27a8a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80')"></div>
+                    <div class="news-content">
+                        <div class="news-date">10 января 2024</div>
+                        <h3 class="news-title">Плановые технические работы</h3>
+                        <p class="news-excerpt">17 января с 03:00 до 05:00 по МСК будут проводиться плановые технические работы.</p>
+                        <a href="news-detail.html?id=2" class="read-more">Читать далее →</a>
+                    </div>
+                </div>
+                
+                <div class="news-card">
+                    <div class="news-image" style="background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
+                    <div class="news-content">
+                        <div class="news-date">5 января 2024</div>
+                        <h3 class="news-title">Новые функции в приложении</h3>
+                        <p class="news-excerpt">Вышло обновление мобильного приложения с новыми функциями и улучшенным интерфейсом.</p>
+                        <a href="news-detail.html?id=3" class="read-more">Читать далее →</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="view-all">
+                <a href="news.html" class="btn btn-primary">Все новости</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="#">О нас</a>
+                <a href="#">Контакты</a>
+                <a href="#">Политика конфиденциальности</a>
+                <a href="#">Пользовательское соглашение</a>
+            </div>
+            <p class="copyright">© 2024 Метро New. Все права защищены.</p>
+        </div>
+    </footer>
+</body>
+</html>
