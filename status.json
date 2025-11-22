@@ -2,46 +2,18 @@
   "lastUpdated": "2025-11-22T12:00:00Z",
   "overallStatus": "partial",
   "services": [
-    {
-      "name": "Discord сервер",
-      "status": "operational",
-      "updated": "2025-11-22T12:00:00Z"
-    },
-    {
-      "name": "Игра в Roblox",
-      "status": "partial",
-      "updated": "2025-11-22T12:00:00Z"
-    },
-    {
-      "name": "Телеграм канал",
-      "status": "outage",
-      "updated": "2025-11-22T12:00:00Z"
-    },
-    {
-      "name": "Основной сайт",
-      "status": "operational",
-      "updated": "2025-11-22T12:00:00Z"
-    },
-    {
-      "name": "Сайт по поиску работы",
-      "status": "operational",
-      "updated": "2025-11-22T12:00:00Z"
-    },
-    {
-      "name": "Сайт поддержки",
-      "status": "operational",
-      "updated": "2025-11-22T12:00:00Z"
-    },
-    {
-      "name": "Сайт статус",
-      "status": "operational",
-      "updated": "2025-11-22T12:00:00Z"
-    }
+    {"name": "Discord сервер", "status": "operational", "updated": "2025-11-22T12:00:00Z"},
+    {"name": "Игра в Roblox", "status": "partial", "updated": "2025-11-22T12:00:00Z"},
+    {"name": "Телеграм канал", "status": "outage", "updated": "2025-11-22T12:00:00Z"},
+    {"name": "Основной сайт", "status": "operational", "updated": "2025-11-22T12:00:00Z"},
+    {"name": "Сайт по поиску работы", "status": "operational", "updated": "2025-11-22T12:00:00Z"},
+    {"name": "Сайт поддержки", "status": "operational", "updated": "2025-11-22T12:00:00Z"},
+    {"name": "Сайт статус", "status": "operational", "updated": "2025-11-22T12:00:00Z"}
   ],
   "history": [
     {
       "service": "Телеграм канал",
-      "reason": "Сбой API Telegram",
+      "reason": "Сбой API",
       "description": "Канал был недоступен из-за проблем с API Telegram",
       "date": "2025-11-21T23:00:00Z",
       "status": "outage"
@@ -59,20 +31,8 @@
       "description": "Сервер временно недоступен на 10 минут",
       "date": "2025-11-21T20:00:00Z",
       "status": "partial"
-    },
-    {
-      "service": "Основной сайт",
-      "reason": "Проблемы с хостингом",
-      "description": "Сайт был недоступен на 15 минут",
-      "date": "2025-11-20T18:00:00Z",
-      "status": "partial"
-    },
-    {
-      "service": "Сайт по поиску работы",
-      "reason": "Техническая ошибка",
-      "description": "Ошибка базы данных, временно недоступно",
-      "date": "2025-11-19T15:30:00Z",
-      "status": "outage"
     }
   ]
 }
+
+
