@@ -478,15 +478,81 @@
         </div>
     </footer>
 
-    <script>
-        // Можно добавить автоматическое обновление статуса
-        function updateStatus() {
-            // В реальном проекте здесь был бы запрос к API
-            console.log("Status update check...");
+<script>
+async function updateStatus() {
+    try {
+        const response = await fetch('status.json'); // файл рядом с status.html
+        const data = await response.json();
+
+        // --- Общий статус ---
+        const overall = document.querySelector('.overall-status .status-indicator');
+        if (data.overallStatus === "operational") {
+            overall.className = "status-indicator status-operational";
+            overall.querySelector('span:nth-child(2)').textContent = "Все системы работают нормально";
+        } else if (data.overallStatus === "partial") {
+            overall.className = "status-indicator status-partial";
+            overall.querySelector('span:nth-child(2)').textContent = "Некоторые системы работают с перебоями";
+        } else {
+            overall.className = "status-indicator status-outage";
+            overall.querySelector('span:nth-child(2)').textContent = "Системы не работают";
         }
-        
-        // Проверяем статус каждые 5 минут
-        setInterval(updateStatus, 300000);
-    </script>
+
+        // --- Сервисы ---
+        const serviceCards = document.querySelectorAll('.service-card');
+        data.services.forEach((service, index) => {
+            const card = serviceCards[index];
+            if (!card) return;
+            const statusDiv = card.querySelector('.service-status');
+            statusDiv.className = 'service-status ' + service.status;
+            statusDiv.querySelector('.text').textContent = 
+                service.status === "operational" ? "Работает нормально" :
+                service.status === "partial" ? "Работает с перебоями" :
+                "Не работает";
+            card.querySelector('.service-time').textContent = `🕒 Обновлено: ${new Date(service.updated).toLocaleString()}`;
+        });
+
+        // --- История ошибок ---
+        let historyContainer = document.querySelector('#history-container');
+        if (!historyContainer) {
+            historyContainer = document.createElement('div');
+            historyContainer.id = 'history-container';
+            historyContainer.style.marginTop = '2rem';
+            historyContainer.style.padding = '1rem';
+            historyContainer.style.backgroundColor = '#f8f9fa';
+            historyContainer.style.borderRadius = '12px';
+            document.querySelector('main').appendChild(historyContainer);
+        }
+        historyContainer.innerHTML = '<h2>История ошибок</h2>';
+
+        data.history.forEach(item => {
+            const div = document.createElement('div');
+            div.style.borderLeft = '5px solid';
+            div.style.padding = '0.5rem 1rem';
+            div.style.marginBottom = '0.5rem';
+            div.style.borderRadius = '4px';
+            div.style.backgroundColor = '#ffffff';
+            div.style.boxShadow = '0 2px 6px rgba(0,0,0,0.05)';
+
+            // Цвет по статусу
+            if (item.status === "operational") div.style.borderColor = 'green';
+            else if (item.status === "partial") div.style.borderColor = 'orange';
+            else div.style.borderColor = 'red';
+
+            div.innerHTML = `<strong>${item.service}</strong> — ${item.reason}<br>
+                             <small>${new Date(item.date).toLocaleString()}</small><br>
+                             <p>${item.description}</p>`;
+            historyContainer.appendChild(div);
+        });
+
+    } catch (err) {
+        console.error("Ошибка при обновлении статуса:", err);
+    }
+}
+
+// Обновление каждые 5 минут
+setInterval(updateStatus, 300000);
+updateStatus();
+</script>
+
 </body>
 </html>
