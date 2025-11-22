@@ -1,495 +1,182 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Статус сервисов - Метро New</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #0066CC;
-            --primary-dark: #0052a3;
-            --secondary: #FFD700;
-            --dark: #1A1A1A;
-            --light: #F8F9FA;
-            --gray: #6C757D;
-            --success: #28A745;
-            --warning: #FFC107;
-            --danger: #DC3545;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: var(--light);
-            color: var(--dark);
-            line-height: 1.6;
-        }
-        
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            padding: 1rem 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-        
-        .logo-icon {
-            width: 30px;
-            height: 30px;
-            background-color: var(--secondary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--dark);
-            font-weight: bold;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 1.5rem;
-        }
-        
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .nav-links a:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
-        
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 2px;
-            background-color: var(--secondary);
-            transition: width 0.3s ease;
-        }
-        
-        .nav-links a:hover::after {
-            width: 70%;
-        }
-        
-        main {
-            padding: 2rem 0;
-            min-height: calc(100vh - 150px);
-        }
-        
-        .page-header {
-            margin-bottom: 2rem;
-        }
-        
-        .page-header h1 {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-        
-        .page-header p {
-            color: var(--gray);
-        }
-        
-        .overall-status {
-            background-color: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            margin-bottom: 3rem;
-            text-align: center;
-        }
-        
-        .status-title {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-        }
-        
-        .status-description {
-            color: var(--gray);
-            margin-bottom: 1.5rem;
-        }
-        
-        .status-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.2rem;
-            font-weight: 600;
-            padding: 0.8rem 1.5rem;
-            border-radius: 50px;
-            margin-bottom: 1rem;
-        }
-        
-        .status-indicator .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-        
-        .status-operational {
-            background-color: rgba(40, 167, 69, 0.1);
-            color: var(--success);
-        }
-        
-        .status-operational .dot {
-            background-color: var(--success);
-        }
-        
-        .status-partial {
-            background-color: rgba(255, 193, 7, 0.1);
-            color: var(--warning);
-        }
-        
-        .status-partial .dot {
-            background-color: var(--warning);
-        }
-        
-        .status-outage {
-            background-color: rgba(220, 53, 69, 0.1);
-            color: var(--danger);
-        }
-        
-        .status-outage .dot {
-            background-color: var(--danger);
-        }
-        
-        .status-time {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-        
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .service-card {
-            background-color: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-        
-        .service-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-        
-        .service-icon {
-            width: 40px;
-            height: 40px;
-            background-color: rgba(0, 102, 204, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            font-size: 1.2rem;
-        }
-        
-        .service-name {
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-        
-        .service-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .service-status .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-        
-        .service-status .text {
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-        
-        .service-status.operational .dot {
-            background-color: var(--success);
-        }
-        
-        .service-status.operational .text {
-            color: var(--success);
-        }
-        
-        .service-status.partial .dot {
-            background-color: var(--warning);
-        }
-        
-        .service-status.partial .text {
-            color: var(--warning);
-        }
-        
-        .service-status.outage .dot {
-            background-color: var(--danger);
-        }
-        
-        .service-status.outage .text {
-            color: var(--danger);
-        }
-        
-        .service-description {
-            color: var(--gray);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-        
-        .service-time {
-            color: var(--gray);
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        
-        footer {
-            background-color: var(--dark);
-            color: white;
-            padding: 2rem 0;
-            text-align: center;
-        }
-        
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-        
-        .footer-links a {
-            color: white;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .footer-links a:hover {
-            color: var(--secondary);
-        }
-        
-        .copyright {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-        
-        @media (max-width: 768px) {
-            nav {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .nav-links {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .page-header h1 {
-                font-size: 2rem;
-            }
-            
-            .services-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Статус сервисов - Метро New</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+    --primary: #0066CC;
+    --primary-dark: #0052a3;
+    --secondary: #FFD700;
+    --dark: #1A1A1A;
+    --light: #F8F9FA;
+    --gray: #6C757D;
+    --success: #28A745;
+    --warning: #FFC107;
+    --danger: #DC3545;
+}
+body { font-family: 'Montserrat', sans-serif; background-color: var(--light); color: var(--dark); line-height: 1.6; }
+header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 1rem 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: sticky; top:0; z-index:1000;}
+.container { width:90%; max-width:1200px; margin:0 auto; }
+nav { display:flex; justify-content:space-between; align-items:center; }
+.logo { display:flex; align-items:center; gap:10px; font-size:1.5rem; font-weight:700; }
+.logo-icon { width:30px; height:30px; background-color: var(--secondary); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--dark); font-weight:bold; }
+.nav-links { display:flex; gap:1.5rem; }
+.nav-links a { color:white; text-decoration:none; font-weight:500; padding:0.5rem 1rem; border-radius:4px; transition: all 0.3s ease; position:relative; }
+.nav-links a:hover { background-color: rgba(255,255,255,0.15); }
+.nav-links a::after { content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:0; height:2px; background-color:var(--secondary); transition:width 0.3s ease; }
+.nav-links a:hover::after { width:70%; }
+main { padding:2rem 0; min-height:calc(100vh - 150px); }
+.page-header { margin-bottom:2rem; }
+.page-header h1 { font-size:2.5rem; color:var(--primary); margin-bottom:0.5rem; }
+.page-header p { color:var(--gray); }
+.overall-status { background-color:white; border-radius:12px; padding:2rem; box-shadow:0 4px 12px rgba(0,0,0,0.08); margin-bottom:2rem; text-align:center; }
+.status-indicator { display:inline-flex; align-items:center; gap:0.5rem; font-size:1.2rem; font-weight:600; padding:0.8rem 1.5rem; border-radius:50px; margin-bottom:1rem; }
+.status-indicator .dot { width:12px; height:12px; border-radius:50%; }
+.status-operational { background-color: rgba(40,167,69,0.1); color:var(--success);}
+.status-operational .dot { background-color:var(--success);}
+.status-partial { background-color: rgba(255,193,7,0.1); color:var(--warning);}
+.status-partial .dot { background-color:var(--warning);}
+.status-outage { background-color: rgba(220,53,69,0.1); color:var(--danger);}
+.status-outage .dot { background-color:var(--danger);}
+.services-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(350px,1fr)); gap:1.5rem; }
+.service-card { background-color:white; border-radius:12px; padding:1.5rem; box-shadow:0 4px 12px rgba(0,0,0,0.08); position:relative;}
+.service-header { display:flex; align-items:center; gap:1rem; margin-bottom:1rem; }
+.service-icon { width:40px; height:40px; background-color: rgba(0,102,204,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--primary); font-size:1.2rem; }
+.service-name { font-size:1.2rem; font-weight:600; }
+.service-status { display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem; }
+.service-status .dot { width:10px; height:10px; border-radius:50%; }
+.service-status .text { font-size:0.9rem; font-weight:500; }
+.service-status.operational .dot { background-color:var(--success); }
+.service-status.operational .text { color:var(--success); }
+.service-status.partial .dot { background-color:var(--warning); }
+.service-status.partial .text { color:var(--warning); }
+.service-status.outage .dot { background-color:var(--danger); }
+.service-status.outage .text { color:var(--danger); }
+.service-description { color:var(--gray); font-size:0.9rem; margin-bottom:0.5rem; }
+.service-time { color:var(--gray); font-size:0.8rem; display:flex; align-items:center; gap:0.3rem; }
+.uptime { font-size:0.8rem; color:var(--primary-dark); margin-top:0.5rem; }
+#filters { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem; }
+#filters input { padding:0.5rem; border-radius:4px; border:1px solid var(--gray); flex:1; }
+#filters button { padding:0.5rem 1rem; border:none; border-radius:4px; cursor:pointer; background-color:var(--primary); color:white; transition:0.3s; }
+#filters button:hover { background-color:var(--primary-dark); }
+#history-container h2 { margin-bottom:1rem; }
+.history-item { border-left:5px solid; padding:0.5rem 1rem; margin-bottom:0.5rem; border-radius:4px; background-color:#fff; box-shadow:0 2px 6px rgba(0,0,0,0.05); }
+footer { background-color: var(--dark); color: white; padding: 2rem 0; text-align: center; }
+</style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <nav>
-                <div class="logo">
-                    <span class="logo-icon"></span>
-                    <span>Метро New</span>
-                </div>
-                <div class="nav-links">
-                    <a href="index.html">Главная</a>
-                    <a href="status.html">Статус</a>
-                    <a href="news.html">Новости</a>
-                </div>
-            </nav>
-        </div>
-    </header>
+<header>
+<div class="container">
+<nav>
+<div class="logo">
+<span class="logo-icon">M</span>
+<span>Метро New</span>
+</div>
+<div class="nav-links">
+<a href="index.html">Главная</a>
+<a href="status.html">Статус</a>
+<a href="news.html">Новости</a>
+</div>
+</nav>
+</div>
+</header>
 
-    <main class="container">
-        <div class="page-header">
-            <h1>Статус сервисов</h1>
-            <p>Актуальная информация о работе всех сервисов Метро New</p>
-        </div>
-        
-        <div class="overall-status">
-            <h2 class="status-title">Общий статус</h2>
-            <p class="status-description">Текущее состояние всех сервисов Метро New</p>
-            <div class="status-indicator status-operational">
-                <span class="dot"></span>
-                <span>Все системы работают нормально</span>
-            </div>
-            <p class="status-time">🕒 Последнее обновление: 11 августа 2025, 00:00</p>
-        </div>
-        
-        <div class="services-grid">
-            <div class="service-card">
-                <div class="service-header">
-                    <div class="service-icon">💬</div>
-                    <div class="service-name">Discord сервер</div>
-                </div>
-                <div class="service-status operational">
-                    <span class="dot"></span>
-                    <span class="text">Работает нормально</span>
-                </div>
-                <p class="service-description">Официальный Discord сервер сообщества Метро New</p>
-                <p class="service-time">🕒 Обновлено: 11 августа 2025 00:00</p>
-            </div>
-            
-            <div class="service-card">
-                <div class="service-header">
-                    <div class="service-icon">🎮</div>
-                    <div class="service-name">Игра в Roblox</div>
-                </div>
-                <div class="service-status operational">
-                    <span class="dot"></span>
-                    <span class="text">Работает нормально</span>
-                </div>
-                <p class="service-description">Официальная игра Метро New в Roblox</p>
-                <p class="service-time">🕒 Обновлено: 11 августа 2025 00:00</p>
-            </div>
-            
-            <div class="service-card">
-                <div class="service-header">
-                    <div class="service-icon">📢</div>
-                    <div class="service-name">Телеграм канал</div>
-                </div>
-                <div class="service-status operational">
-                    <span class="dot"></span>
-                    <span class="text">Работает нормально</span>
-                </div>
-                <p class="service-description">Официальный Telegram канал с новостями</p>
-                <p class="service-time">🕒 Обновлено: 11 августа 2025 00:00</p>
-            </div>
-            
-            <div class="service-card">
-                <div class="service-header">
-                    <div class="service-icon">🌐</div>
-                    <div class="service-name">Основной сайт</div>
-                </div>
-                <div class="service-status operational">
-                    <span class="dot"></span>
-                    <span class="text">Работает нормально</span>
-                </div>
-                <p class="service-description">Главный сайт проекта Метро New</p>
-                <p class="service-time">🕒 Обновлено: 11 августа 2025 00:00</p>
-            </div>
-            
-            <div class="service-card">
-                <div class="service-header">
-                    <div class="service-icon">💼</div>
-                    <div class="service-name">Сайт по поиску работы</div>
-                </div>
-                <div class="service-status operational">
-                    <span class="dot"></span>
-                    <span class="text">Работает нормально</span>
-                </div>
-                <p class="service-description">Платформа для поиска работы в проекте</p>
-                <p class="service-time">🕒 Обновлено: 11 августа 2025 00:00</p>
-            </div>
-            
-            <div class="service-card">
-                <div class="service-header">
-                    <div class="service-icon">🛠️</div>
-                    <div class="service-name">Сайт поддержки</div>
-                </div>
-                <div class="service-status operational">
-                    <span class="dot"></span>
-                    <span class="text">Работает нормально</span>
-                </div>
-                <p class="service-description">Техническая поддержка пользователей</p>
-                <p class="service-time">🕒 Обновлено: 11 августа 2025 00:00</p>
-            </div>
-            
-            <div class="service-card">
-                <div class="service-header">
-                    <div class="service-icon">📊</div>
-                    <div class="service-name">Сайт статус</div>
-                </div>
-                <div class="service-status operational">
-                    <span class="dot"></span>
-                    <span class="text">Работает нормально</span>
-                </div>
-                <p class="service-description">Статистика проекта</p>
-                <p class="service-time">🕒 Обновлено: 11 августа 2025 00:00</p>
-            </div>
-        </div>
-    </main>
+<main class="container">
+<div class="page-header">
+<h1>Статус сервисов</h1>
+<p>Актуальная информация о работе всех сервисов Метро New</p>
+</div>
 
-    <footer>
-        <div class="container">
-            <div class="footer-links">
-                <a href="https://discord.com/invite/WjGZBs3HMX">О нас</a>
-                <a href="https://discord.com/invite/WjGZBs3HMX">Контакты</a>
-                <a href="https://docs.google.com/document/d/1Y_3cs7qEcSehVIirIPSSqJQjxOco5ixipMF6zXSSO_I/edit?usp=sharing">Политика конфиденциальности</a>
-                <a href="https://docs.google.com/document/d/1bbDwsFuSFou-qqcIvhb44mton1z2TY32F9SqcYnMcyI/edit?usp=sharing">Пользовательское соглашение</a>
-            </div>
-            <p class="copyright">© 2025 Метро New. Все права защищены.</p>
-        </div>
-    </footer>
+<div class="overall-status">
+<div class="status-indicator status-operational">
+<span class="dot"></span>
+<span>Все системы работают нормально</span>
+</div>
+<p class="status-time">🕒 Последнее обновление: 11 августа 2025, 00:00</p>
+</div>
+
+<!-- Фильтры и поиск -->
+<div id="filters">
+<input type="text" id="searchInput" placeholder="Поиск сервиса...">
+<button data-status="all">Все</button>
+<button data-status="operational">Работает нормально</button>
+<button data-status="partial">С перебоями</button>
+<button data-status="outage">Не работает</button>
+</div>
+
+<div class="services-grid">
+<!-- Пример карточек -->
+<div class="service-card">
+<div class="service-header">
+<div class="service-icon">💬</div>
+<div class="service-name">Discord сервер</div>
+</div>
+<div class="service-status operational">
+<span class="dot"></span>
+<span class="text">Работает нормально</span>
+</div>
+<p class="service-description">Официальный Discord сервер сообщества Метро New</p>
+<p class="service-time">🕒 Обновлено: 11 августа 2025 00:00</p>
+</div>
+
+<div class="service-card">
+<div class="service-header">
+<div class="service-icon">🎮</div>
+<div class="service-name">Игра в Roblox</div>
+</div>
+<div class="service-status operational">
+<span class="dot"></span>
+<span class="text">Работает нормально</span>
+</div>
+<p class="service-description">Официальная игра Метро New в Roblox</p>
+<p class="service-time">🕒 Обновлено: 11 августа 2025 00:00</p>
+</div>
+
+<div class="service-card">
+<div class="service-header">
+<div class="service-icon">📢</div>
+<div class="service-name">Телеграм канал</div>
+</div>
+<div class="service-status operational">
+<span class="dot"></span>
+<span class="text">Работает нормально</span>
+</div>
+<p class="service-description">Официальный Telegram канал с новостями</p>
+<p class="service-time">🕒 Обновлено: 11 августа 2025 00:00</p>
+</div>
+
+<!-- Можно добавить остальные сервисы по аналогии -->
+</div>
+
+<!-- График -->
+<canvas id="downtimeChart" width="400" height="200" style="margin-top:2rem;"></canvas>
+
+<!-- История ошибок -->
+<div id="history-container"></div>
+</main>
+
+<footer>
+<div class="container">
+<p>© 2025 Метро New. Все права защищены.</p>
+</div>
+</footer>
 
 <script>
 async function updateStatus() {
     try {
-        const response = await fetch('status.json'); // файл рядом с status.html
+        const response = await fetch('status.json');
         const data = await response.json();
 
-        // --- Общий статус ---
+        // Общий статус
         const overall = document.querySelector('.overall-status .status-indicator');
-        if (data.overallStatus === "operational") {
+        if(data.overallStatus === "operational") {
             overall.className = "status-indicator status-operational";
             overall.querySelector('span:nth-child(2)').textContent = "Все системы работают нормально";
-        } else if (data.overallStatus === "partial") {
+        } else if(data.overallStatus === "partial") {
             overall.className = "status-indicator status-partial";
             overall.querySelector('span:nth-child(2)').textContent = "Некоторые системы работают с перебоями";
         } else {
@@ -497,62 +184,80 @@ async function updateStatus() {
             overall.querySelector('span:nth-child(2)').textContent = "Системы не работают";
         }
 
-        // --- Сервисы ---
+        // Обновление карточек
         const serviceCards = document.querySelectorAll('.service-card');
-        data.services.forEach((service, index) => {
+        data.services.forEach((service,index)=>{
             const card = serviceCards[index];
-            if (!card) return;
+            if(!card) return;
             const statusDiv = card.querySelector('.service-status');
-            statusDiv.className = 'service-status ' + service.status;
-            statusDiv.querySelector('.text').textContent = 
+            statusDiv.className = 'service-status '+service.status;
+            statusDiv.querySelector('.text').textContent =
                 service.status === "operational" ? "Работает нормально" :
-                service.status === "partial" ? "Работает с перебоями" :
-                "Не работает";
+                service.status === "partial" ? "Работает с перебоями" : "Не работает";
             card.querySelector('.service-time').textContent = `🕒 Обновлено: ${new Date(service.updated).toLocaleString()}`;
+
+            // Uptime
+            const lastError = data.history.filter(h=>h.service===service.name && h.status!=='operational')
+                                .sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
+            const now = new Date();
+            const lastErrorDate = lastError ? new Date(lastError.date) : new Date(service.updated);
+            const diffMs = now - lastErrorDate;
+            const diffH = Math.floor(diffMs/1000/60/60);
+            const diffM = Math.floor((diffMs/1000/60)%60);
+            let uptimeDiv = card.querySelector('.uptime');
+            if(!uptimeDiv) {
+                uptimeDiv = document.createElement('div');
+                uptimeDiv.className='uptime';
+                card.appendChild(uptimeDiv);
+            }
+            uptimeDiv.textContent=`Без сбоев: ${diffH}ч ${diffM}м`;
         });
 
-        // --- История ошибок ---
+        // История ошибок
         let historyContainer = document.querySelector('#history-container');
-        if (!historyContainer) {
-            historyContainer = document.createElement('div');
-            historyContainer.id = 'history-container';
-            historyContainer.style.marginTop = '2rem';
-            historyContainer.style.padding = '1rem';
-            historyContainer.style.backgroundColor = '#f8f9fa';
-            historyContainer.style.borderRadius = '12px';
-            document.querySelector('main').appendChild(historyContainer);
-        }
-        historyContainer.innerHTML = '<h2>История ошибок</h2>';
-
-        data.history.forEach(item => {
-            const div = document.createElement('div');
-            div.style.borderLeft = '5px solid';
-            div.style.padding = '0.5rem 1rem';
-            div.style.marginBottom = '0.5rem';
-            div.style.borderRadius = '4px';
-            div.style.backgroundColor = '#ffffff';
-            div.style.boxShadow = '0 2px 6px rgba(0,0,0,0.05)';
-
-            // Цвет по статусу
-            if (item.status === "operational") div.style.borderColor = 'green';
-            else if (item.status === "partial") div.style.borderColor = 'orange';
-            else div.style.borderColor = 'red';
-
-            div.innerHTML = `<strong>${item.service}</strong> — ${item.reason}<br>
-                             <small>${new Date(item.date).toLocaleString()}</small><br>
-                             <p>${item.description}</p>`;
+        historyContainer.innerHTML='<h2>История ошибок</h2>';
+        data.history.forEach(item=>{
+            const div=document.createElement('div');
+            div.className='history-item';
+            if(item.status==="operational") div.style.borderColor='green';
+            else if(item.status==="partial") div.style.borderColor='orange';
+            else div.style.borderColor='red';
+            div.innerHTML=`<strong>${item.service}</strong> — ${item.reason}<br>
+            <small>${new Date(item.date).toLocaleString()}</small><br>
+            <p>${item.description}</p>`;
             historyContainer.appendChild(div);
         });
 
-    } catch (err) {
-        console.error("Ошибка при обновлении статуса:", err);
-    }
+        // График сбоев
+        const labels = data.services.map(s=>s.name);
+        const counts = data.services.map(s=>data.history.filter(h=>h.service===s.name && h.status!=='operational').length);
+        if(window.downtimeChart) window.downtimeChart.destroy();
+        const ctx = document.getElementById('downtimeChart').getContext('2d');
+        window.downtimeChart = new Chart(ctx,{ type:'bar', data:{ labels, datasets:[{label:'Кол-во сбоев за неделю', data:counts, backgroundColor:'rgba(255,99,132,0.5)'}] } });
+        
+    } catch(err){ console.error("Ошибка при обновлении статуса:",err);}
 }
 
-// Обновление каждые 5 минут
-setInterval(updateStatus, 300000);
+// Фильтры и поиск
+document.querySelectorAll('#filters button').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+        const status = btn.getAttribute('data-status');
+        document.querySelectorAll('.service-card').forEach(card=>{
+            if(status==='all'||card.querySelector('.service-status').classList.contains(status)) card.style.display='block';
+            else card.style.display='none';
+        });
+    });
+});
+document.getElementById('searchInput').addEventListener('input',(e)=>{
+    const query=e.target.value.toLowerCase();
+    document.querySelectorAll('.service-card').forEach(card=>{
+        const name = card.querySelector('.service-name').textContent.toLowerCase();
+        card.style.display=name.includes(query)?'block':'none';
+    });
+});
+
+setInterval(updateStatus,300000);
 updateStatus();
 </script>
-
 </body>
 </html>
